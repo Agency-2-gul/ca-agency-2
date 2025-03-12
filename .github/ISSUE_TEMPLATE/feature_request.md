@@ -1,19 +1,19 @@
 ---
 name: "🚀 Feature Request"
-about: "Propose a new feature for the project"
-title: "[FEATURE] <Short Description>"
+about: "Foreslå en ny funksjon eller forbedring"
+title: "[FEATURE] <Kort beskrivelse>"
 labels: enhancement
 assignees: ""
 ---
 
-### 💡 Describe the Feature
-<!-- Provide a detailed description of the feature request -->
+### 💡 Beskrivelse av funksjonen
+<!-- Beskriv funksjonen kort og tydelig. -->
 
-### 📝 Why Is This Needed?
-<!-- Explain why this feature would be useful -->
+### 🔍 Hvorfor trengs denne funksjonen?
+<!-- Forklar hvorfor denne funksjonen er nyttig. -->
 
-### ✅ Possible Implementation
-<!-- Suggest how this could be implemented -->
+### ✅ Mulig implementering
+<!-- Hvordan kan denne funksjonen implementeres? -->
 
-### 🔗 Additional Context
-<!-- Add any references, screenshots, or links if applicable -->
+### ✍ Tilleggsinformasjon
+<!-- Eventuell ekstra informasjon eller referanser. -->

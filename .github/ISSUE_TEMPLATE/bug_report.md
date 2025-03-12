@@ -1,33 +1,29 @@
 ---
 name: "🐛 Bug Report"
-about: "Report a problem with the project"
-title: "[BUG] <Short Description>"
+about: "Rapporter et problem med prosjektet"
+title: "[BUG] <Kort beskrivelse>"
 labels: bug
 assignees: ""
 ---
 
-### 🐞 Bug Description
-<!-- Briefly describe the bug in 1-2 sentences -->
-A clear and concise description of the problem.
+### 🐞 Feilbeskrivelse
+<!-- Beskriv feilen kort og tydelig. Hva gikk galt? -->
 
-### 🔍 Steps to Reproduce
-<!-- List step-by-step instructions to reproduce the issue -->
-1. Go to '...'
-2. Click on '...'
-3. See error
+### 🔍 Steg for å gjenskape feilen
+1. Gå til '...'
+2. Klikk på '...'
+3. Se feilen
 
-### 💡 Expected Behavior
-<!-- Describe what should happen instead -->
-What should happen instead?
+### 💡 Forventet oppførsel
+<!-- Hva skulle skjedd i stedet? -->
 
-### 📷 Screenshots
-<!-- If applicable, attach screenshots or screen recordings -->
+### 📷 Skjermbilder
+<!-- Legg ved skjermbilder hvis mulig. -->
 
-### 🛠 Environment
-<!-- Provide relevant system info to help debug the issue -->
-- **OS:** [e.g., Windows, macOS, Linux]
-- **Browser:** [e.g., Chrome, Firefox]
-- **Version:** [e.g., v1.0.0]
+### 🛠 Miljø
+- OS: [f.eks. Windows, macOS, Linux]
+- Nettleser: [f.eks. Chrome, Firefox]
+- Versjon: [f.eks. v1.0.0]
 
-### Additional Context
-<!-- Any additional details or logs related to the issue -->
+### ✍ Tilleggsinformasjon
+<!-- Annen relevant informasjon om feilen -->

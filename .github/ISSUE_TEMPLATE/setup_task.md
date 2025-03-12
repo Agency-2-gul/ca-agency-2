@@ -1,27 +1,27 @@
 ---
 name: "🛠 Setup Task"
-about: "Use this template for setting up project infrastructure and tools."
-title: "[SETUP] <Short Description>"
+about: "Oppgaver relatert til oppsett av prosjektet"
+title: "[SETUP] <Kort beskrivelse>"
 labels: setup
 assignees: ""
 ---
 
-### 📌 Task Description
-<!-- Provide a clear description of the setup task. What needs to be done? -->
+### 📌 Oppgavebeskrivelse
+<!-- Hva skal gjøres i denne oppgaven? -->
 
-### ✅ Checklist
-<!-- Break down the task into smaller steps (if applicable). -->
-- [ ] Step 1
-- [ ] Step 2
-- [ ] Step 3
+### ✅ Sjekkliste
+<!-- Del opp oppgaven i mindre deler (om nødvendig). -->
+- [ ] Steg 1
+- [ ] Steg 2
+- [ ] Steg 3
 
-### 🔧 Dependencies
-<!-- Are there any dependencies (e.g., other tasks, files, or configurations that must be completed first)? -->
-- [ ] None
-- [ ] Depends on: #ISSUE_NUMBER
+### 🔧 Avhengigheter
+<!-- Er det noe som må fullføres før denne oppgaven kan gjennomføres? -->
+- [ ] Ingen
+- [ ] Avhenger av: #ISSUE_NUMMER
 
-### 📝 Expected Outcome
-<!-- What should be achieved once this setup task is completed? -->
+### 📝 Forventet resultat
+<!-- Hva er målet med denne oppgaven? -->
 
-### ✍ Additional Context
-<!-- Any extra details, links, or references related to this setup task -->
+### ✍ Tilleggsinformasjon
+<!-- Annen relevant informasjon -->
