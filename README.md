@@ -38,3 +38,11 @@ ca-agency-2
 ├── tailwind.config.js       # Tailwind CSS configuration
 └── vite.config.js           # Vite configuration (plugins, aliasing, server settings)
 ```
+
+## Additional Information
+To get a nice file overview run this in bash terminal:
+```
+npx tree-node-cli -L 2 -I "node_modules"
+```
+-L is amount of lines shown in tree
+-I means ignore
