@@ -64,7 +64,7 @@ const FirebaseRegister = ({ setIsRegistering }) => {
       </form>
 
       <p className="mt-4">
-        Har du allerede en konto?{" "}
+        Har du allerede en kånto?{" "}
         <button onClick={() => setIsRegistering(false)} className="text-blue-500 underline">
           Logg inn
         </button>
