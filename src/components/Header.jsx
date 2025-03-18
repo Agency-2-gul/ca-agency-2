@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between">
+    <header className="bg-gray-800 text-white p-4 justify-between hidden sm:flex">
       <h1 className="text-xl">
         <Link to="/">Matboksen</Link>
       </h1>
