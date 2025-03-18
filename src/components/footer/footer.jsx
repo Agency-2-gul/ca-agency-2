@@ -18,7 +18,7 @@ const Footer = () => {
         <span className="icon-text">Oppskrifter</span>
       </div>
       <div className="icon-div">
-        <FaCirclePlus className="center-icon" gradientTransform="" />
+        <FaCirclePlus className="center-icon" />
       </div>
       <div className="icon-div">
         <BsGraphUpArrow className="icon icon-stroke" />{' '}
