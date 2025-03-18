@@ -6,7 +6,7 @@
 }
 
 .icon-div {
-    @apply  flex flex-col items-center 
+    @apply  flex flex-col items-center w-[55px] 
 }
 .icon {
     @apply  text-[24px]; 
