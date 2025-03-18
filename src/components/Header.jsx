@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <header className="bg-gray-800 text-white p-4 flex justify-between">
       <h1 className="text-xl">
-        <Link to="/">NutriLink</Link>
+        <Link to="/">Matboksen</Link>
       </h1>
       <nav>
         <ul className="flex space-x-4">
