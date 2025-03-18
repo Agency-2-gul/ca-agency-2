@@ -57,7 +57,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
           required
         />
 
-        <button type="submit" className="bg-black text-white p-2 rounded" disabled={loading}>
+        <button type="submit" className="bg-green-500 text-white p-2 rounded" disabled={loading}>
           {loading ? "Logger inn..." : "Logg inn"}
         </button>
       </form>
