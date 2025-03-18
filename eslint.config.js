@@ -28,6 +28,7 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      'react/jsx-filename-extension': ['warn', { extensions: ['.js', '.jsx'] }],
     },
   },
 ]
