@@ -4,7 +4,7 @@ import { BiSolidPieChartAlt2 } from 'react-icons/bi';
 import { FaBook } from 'react-icons/fa';
 import { FaCirclePlus } from 'react-icons/fa6';
 import { BsGraphUpArrow } from 'react-icons/bs';
-import { BsThreeDots } from 'react-icons/bs';
+import { CgProfile } from "react-icons/cg";
 
 export default function FooterNav() {
   return (
@@ -26,10 +26,10 @@ export default function FooterNav() {
         <BsGraphUpArrow className="icon icon-stroke" />{' '}
         <span className="icon-text">Priser</span>
       </div>
-      <div className="icon-div">
-        <BsThreeDots className="icon icon-stroke" />{' '}
-        <span className="icon-text">Mer</span>
-      </div>
+      <Link className="icon-div" to="/profile">
+        <CgProfile className="icon icon-stroke" />{' '}
+        <span className="icon-text">Profil</span>
+      </Link>
     </>
   );
 }

@@ -60,7 +60,7 @@ const Profile = () => {
 
         <button
           onClick={handleLogout}
-          className="bg-black text-white p-2 rounded w-full mt-4"
+          className="bg-black text-white p-2 rounded w-full mt-4 cursor-pointer"
         >
           Logg ut
         </button>
@@ -68,7 +68,7 @@ const Profile = () => {
         {!showDeleteConfirm ? (
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="bg-red-500 text-white p-2 rounded w-full mt-2"
+            className="bg-red-500 text-white p-2 rounded w-full mt-2 cursor-pointer"
           >
             Slett konto
           </button>
