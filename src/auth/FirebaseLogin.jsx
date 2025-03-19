@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import FirebaseForgotPassword from "./FirebaseForgotPassword";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import FontAwesome icons
 
 const FirebaseLogin = ({ setIsRegistering }) => {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,7 +32,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
 
       setSuccess("Innlogging vellykket!");
     } catch (err) {
-      setError(err.message);
+      setError("E-post eller passord er feil");
     }
 
     setLoading(false);
@@ -52,14 +54,24 @@ const FirebaseLogin = ({ setIsRegistering }) => {
           className="border p-2 mb-2"
           required
         />
-        <input
-          type="password"
-          placeholder="Passord"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 mb-2"
-          required
-        />
+
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Passord"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 mb-2 w-full pr-10"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 text-gray-600"
+          >
+            {showPassword ? <FaEye size={20} /> : <FaEyeSlash size={20} />}
+          </button>
+        </div>
 
         <button type="submit" className="bg-black text-white p-2 rounded cursor-pointer" disabled={loading}>
           {loading ? "Logger inn..." : "Logg inn"}
