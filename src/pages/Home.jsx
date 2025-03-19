@@ -1,4 +1,4 @@
-import CalorieTracker from '../components/home/calorieTracker';
+import CalorieTracker from '../components/home/CalorieTracker';
 
 const Home = () => {
   return (
