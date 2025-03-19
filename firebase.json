@@ -9,10 +9,11 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.html" 
+        "destination": "/index.html"
       }
     ]
   },
+  
   "storage": {
     "rules": "storage.rules"
   },

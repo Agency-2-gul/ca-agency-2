@@ -9,7 +9,7 @@ const FirebaseAuth = () => {
   const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || (user && !user.emailVerified)) {
       setIsOpen(true);
     } else {
       setIsOpen(false);
