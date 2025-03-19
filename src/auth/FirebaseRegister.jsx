@@ -131,7 +131,7 @@ const FirebaseRegister = ({ setIsRegistering }) => {
             onClick={() => setIsRegistering(false)}
             className="text-blue-500 underline text-center"
           >
-            Har du allerde en bruker? Logg inn
+            Har du allerde en bruker? Logg inn her
           </button>
         </form>
       )}
