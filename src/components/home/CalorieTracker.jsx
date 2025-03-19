@@ -7,7 +7,7 @@ const CalorieTracker = () => {
       className="h-[310px] bg-cover bg-center flex items-center justify-center"
       style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
-      <div className="bg-gray-200 h-[177px] w-[388px] flex items-center justify-start rounded-xl shadow-md">
+      <div className="bg-gray-200 h-[177px] w-full mx-4 flex items-center justify-start rounded-xl shadow-md">
         <CalorieProgress totalCalories={2000} consumedCalories={1500} />
       </div>
     </div>
