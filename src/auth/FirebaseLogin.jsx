@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import FirebaseForgotPassword from "./FirebaseForgotPassword";
 
 const FirebaseLogin = ({ setIsRegistering }) => {
   const [email, setEmail] = useState("");
@@ -7,6 +8,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,8 +29,6 @@ const FirebaseLogin = ({ setIsRegistering }) => {
       }
 
       setSuccess("Innlogging vellykket!");
-      console.log("User logged in:", user);
-
     } catch (err) {
       setError(err.message);
     }
@@ -61,17 +61,23 @@ const FirebaseLogin = ({ setIsRegistering }) => {
           required
         />
 
-        <button type="submit" className="bg-black text-white p-2 rounded" disabled={loading}>
+        <button type="submit" className="bg-black text-white p-2 rounded cursor-pointer" disabled={loading}>
           {loading ? "Logger inn..." : "Logg inn"}
         </button>
       </form>
 
+      <button onClick={() => setShowForgotPassword(true)} className="text-blue-500 underline mt-2 cursor-pointer">
+        Glemt passord?
+      </button>
+
       <p className="mt-4">
         Har du ingen konto?{" "}
-        <button onClick={() => setIsRegistering(true)} className="text-blue-500 underline">
+        <button onClick={() => setIsRegistering(true)} className="text-blue-500 underline cursor-pointer">
           Registrer deg her
         </button>
       </p>
+
+      {showForgotPassword && <FirebaseForgotPassword setShowForgotPassword={setShowForgotPassword} />}
     </div>
   );
 };

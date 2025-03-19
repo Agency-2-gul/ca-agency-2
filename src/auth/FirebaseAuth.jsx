@@ -18,7 +18,7 @@ const FirebaseAuth = () => {
 
   return (
     isOpen && (
-      <div className="fixed inset-0 flex items-center justify-center">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
         <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
           {isRegistering ? (
             <FirebaseRegister setIsRegistering={setIsRegistering} />
