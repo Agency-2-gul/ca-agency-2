@@ -8,14 +8,15 @@
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "prepare": "husky"
   },
   "lint-staged": {
-  "src/**/*.{js,jsx,ts,tsx}": [
-    "eslint --max-warnings=0 --format=stylish || echo '✅ ESLint ran without errors and warnings'",
-    "prettier --write --loglevel=debug || echo '✅ Prettier ran without errors and warnings'"
-  ]
-},
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --max-warnings=0",
+      "prettier --write"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-push": "npm run lint"
