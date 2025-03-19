@@ -1,5 +1,5 @@
 import './footer.css';
-import FlooterNav from './FooterNav';
+import FplooterNav from './FooterNav';
 
 const Footer = () => {
   return (
