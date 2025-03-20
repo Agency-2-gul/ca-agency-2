@@ -123,7 +123,7 @@ const FirebaseRegister = ({ setIsRegistering }) => {
             required
           />
 
-          <button type="submit" className="bg-black text-white p-2 rounded mb-2">
+          <button type="submit" className="bg-black text-white p-2 rounded mb-2 cursor-pointer">
             Registrer
           </button>
 

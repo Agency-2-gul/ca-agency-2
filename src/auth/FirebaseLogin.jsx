@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import FirebaseForgotPassword from "./FirebaseForgotPassword";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import FontAwesome icons
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const FirebaseLogin = ({ setIsRegistering }) => {
   const [email, setEmail] = useState("");
@@ -40,7 +40,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Logg inn</h2>
+      <h2 className="text-xl font-bold mb-4">Kom i gang her</h2>
 
       {success && <p className="text-green-500">{success}</p>}
       {error && <p className="text-red-500">{error}</p>}
