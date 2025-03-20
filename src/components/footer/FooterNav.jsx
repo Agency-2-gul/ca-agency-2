@@ -10,7 +10,7 @@ export default function FooterNav() {
   return (
     <>
       <Link className="icon-div" to="/">
-        <BiSolidPieChartAlt2 className="icon" />
+        <BiSolidPieChartAlt2 className="icon circular-icon" />
         <span className="icon-text">Oversikt</span>
       </Link>
 
@@ -38,7 +38,7 @@ export default function FooterNav() {
         <span className="icon-text">Priser</span>
       </div>
       <Link className="icon-div" to="/profile">
-        <CgProfile className="icon icon-stroke" />{' '}
+        <CgProfile className="icon icon-stroke circular-icon" />{' '}
         <span className="icon-text">Profil</span>
       </Link>
     </>
