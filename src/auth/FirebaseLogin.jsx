@@ -45,19 +45,23 @@ const FirebaseLogin = ({ setIsRegistering }) => {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Kom i gang her</h2>
+    <div className="w-full px-4 sm:px-6 md:px-0 md:max-w-md lg:max-w-lg mx-auto">
+      <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center md:text-left">
+          Logg inn
+        </h2>
 
-      {success && <p className="text-green-500">{success}</p>}
-      {error && <p className="text-red-500">{error}</p>}
+        {success && (
+          <p className="text-green-500 text-sm sm:text-base">{success}</p>
+        )}
+        {error && <p className="text-red-500 text-sm sm:text-base">{error}</p>}
 
-      <form onSubmit={handleLogin} className="flex flex-col">
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 mb-2"
+          className="border p-2 mb-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F67B39] focus:border-transparent"
           required
         />
 
@@ -67,7 +71,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
             placeholder="Passord"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border p-2 mb-2 w-full pr-10"
+            className="border p-2 mb-2 w-full pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F67B39] focus:border-transparent"
             required
           />
           <button
@@ -81,29 +85,36 @@ const FirebaseLogin = ({ setIsRegistering }) => {
 
         <button
           type="submit"
-          className="bg-black text-white p-2 rounded cursor-pointer"
+          className="text-white w-full sm:w-[200px] mx-auto p-2 sm:p-3 rounded cursor-pointer bg-gradient-to-r from-[#E64D20] to-[#F67B39] relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed before:absolute before:inset-0 before:bg-[#E64D20] before:translate-x-[-100%] hover:before:translate-x-0 before:transition-transform before:duration-300 before:ease-in-out before:z-0"
           disabled={loading}
         >
-          {loading ? 'Logger inn...' : 'Logg inn'}
+          <span className="relative z-10">
+            {loading ? 'Logger inn...' : 'Logg inn'}
+          </span>
         </button>
+
+        <p className="text-center mt-2 text-sm sm:text-base">
+          <button
+            type="button"
+            onClick={() => setShowForgotPassword(true)}
+            className="text-black underline cursor-pointer hover:text-[#E64D20]"
+          >
+            Glemt passord?
+          </button>
+        </p>
+
+        <p className="text-center text-sm sm:text-base">
+          Har du ingen konto? Registrer deg
+          <button
+            type="button"
+            onClick={() => setIsRegistering(true)}
+            className="text-black underline text-center pl-1 cursor-pointer hover:text-[#E64D20]"
+          >
+            her
+          </button>
+        </p>
       </form>
 
-      <button
-        onClick={() => setShowForgotPassword(true)}
-        className="text-blue-500 underline mt-2 cursor-pointer"
-      >
-        Glemt passord?
-      </button>
-
-      <p className="mt-4">
-        Har du ingen konto?{' '}
-        <button
-          onClick={() => setIsRegistering(true)}
-          className="text-blue-500 underline cursor-pointer"
-        >
-          Registrer deg her
-        </button>
-      </p>
 
       {showForgotPassword && (
         <FirebaseForgotPassword setShowForgotPassword={setShowForgotPassword} />
