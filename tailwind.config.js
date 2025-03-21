@@ -8,7 +8,7 @@ export default {
     extend: {
       colors: {
         "primary-bg": "#FFFFFF",
-        "orange-gradient": "linear-gradient(to right, #E64D20 0%, #F67B39 77%",
+        "orange-gradient": "linear-gradient(to right, #E64D20 0%, #F67B39 77%", // bruk denne bg-gradient-to-r from-[#E64D20] to-[#F67B39]
         "light-sections": "#F7F7F7",
         "primary-text": "#333333",
         "footer-text": "#6C757D",
