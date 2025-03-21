@@ -3,9 +3,9 @@ import FooterNav from './FooterNav';
 
 const Footer = () => {
   return (
-    <div className="footer">
+    <>
       <FooterNav />
-    </div>
+    </>
   );
 };
 
