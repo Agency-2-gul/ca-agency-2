@@ -10,37 +10,49 @@ const CalorieTracker = () => {
       className="h-[310px] bg-cover bg-center flex items-center justify-center"
       style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
-      <div className="bg-gray-200 h-[177px] w-full mx-4 flex items-center justify-start rounded-xl shadow-md">
+      <div
+        className="h-[200px] w-full mx-4 flex items-center justify-start rounded-xl shadow-md -mt-6"
+        style={{ backgroundColor: '#F7F7F7' }}
+      >
         <div>
           <CalorieProgress totalCalories={2800} consumedCalories={2362} />
         </div>
         {/* Right Side: Text Content */}
         <div
-          className="flex flex-col justify-center ml-auto mr-4 space-y-3 relative top-3"
+          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-4 text-sm"
           style={{ color: '#333333' }}
         >
-          <div className="flex items-center gap-3">
+          {/* Grunnmål */}
+          <div className="flex flex-row items-center gap-2">
             <span className="text-gray-500">
-              <FaFontAwesomeFlag />
+              <FaFontAwesomeFlag size={24} />
             </span>
-            <p className="font-medium">Grunnmål</p>
-            <p className="ml-auto font-bold">2800</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-gray-500">
-              <FaAppleAlt />
-            </span>
-            <p className="font-medium">Mat</p>
-            <p className="ml-auto font-bold">2362</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="flex items-center gap-3">
-              <span className="text-gray-500">
-                <FaGlassWater />
-              </span>
-              <p className="font-medium">Vann</p>
+            <div className="flex flex-col items-start">
+              <p className="font-medium">Grunnmål</p>
+              <p className="font-bold">2800</p>
             </div>
-            <p className="font-bold pl-3">1L</p>
+          </div>
+
+          {/* Mat */}
+          <div className="flex flex-row items-center gap-2">
+            <span className="text-gray-500">
+              <FaAppleAlt size={24} />
+            </span>
+            <div className="flex flex-col items-start">
+              <p className="font-medium">Mat</p>
+              <p className="font-bold">2362</p>
+            </div>
+          </div>
+
+          {/* Vann */}
+          <div className="flex flex-row items-center gap-2">
+            <span className="text-gray-500">
+              <FaGlassWater size={23} />
+            </span>
+            <div className="flex flex-col items-start">
+              <p className="font-medium">Vann</p>
+              <p className="font-bold">1L</p>
+            </div>
           </div>
         </div>
       </div>

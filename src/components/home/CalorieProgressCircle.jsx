@@ -9,13 +9,13 @@ const CalorieProgress = ({ totalCalories, consumedCalories }) => {
   const idCSS = 'orangeGradient';
 
   return (
-    <div className="flex flex-col items-start ml-4 rounded-xl">
-      <h2 className="text-lg font-bold pb-2" style={{ color: '#333333' }}>
+    <div className="flex flex-col items-start ml-6 rounded-xl">
+      <h2 className="text-xl font-bold pb-2" style={{ color: '#333333' }}>
         Kalorier
       </h2>
       <div
         className="relative w-24 h-24"
-        style={{ width: '120px', height: '120px' }}
+        style={{ width: '140px', height: '140px' }}
       >
         {/* Progress Circle */}
         <CircularProgressbar
@@ -39,14 +39,14 @@ const CalorieProgress = ({ totalCalories, consumedCalories }) => {
         </svg>
         {/* Remaining Calories Counter */}
         <p
-          className="absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-bold"
+          className="absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold"
           style={{ color: '#333333' }}
         >
           {remainingCalories}
         </p>
         {/* Gjenstående Text */}
         <p
-          className="absolute bottom-[32%] left-1/2 -translate-x-1/2 text-xs"
+          className="absolute bottom-[31%] left-1/2 -translate-x-1/2 text-sm"
           style={{ color: '#333333' }}
         >
           Gjenstående
