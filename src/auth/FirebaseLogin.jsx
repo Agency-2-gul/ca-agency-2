@@ -38,7 +38,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
 
       setSuccess('Innlogging vellykket!');
     } catch (err) {
-      setError(`Kunne ikke logge inn: ${err.message}`);
+      setError(`E-post eller passord er feil ${console.log(err.message)}`);
     }
 
     setLoading(false);

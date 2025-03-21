@@ -30,7 +30,7 @@ const FirebaseAuth = () => {
           Din nettleser støtter ikke videoelementet.
         </video>
 
-        <div className="relative z-10 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg w-96">
+        <div className="relative z-1000 bg-white bg-opacity-80 p-6 rounded-lg shadow-lg w-96">
           {isRegistering ? (
             <FirebaseRegister setIsRegistering={setIsRegistering} />
           ) : (

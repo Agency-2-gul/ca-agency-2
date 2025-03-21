@@ -21,7 +21,9 @@ const FirebaseForgotPassword = ({ setShowForgotPassword }) => {
       await sendPasswordResetEmail(auth, email);
       setSuccess('En e-post for tilbakestilling av passord er sendt.');
     } catch (err) {
-      setError(`Kunne ikke sende tilbakestillings-e-post: ${err.message}`);
+      setError(
+        `Kunne ikke sende tilbakestillings-e-post. Sjekk at e-posten er riktig. ${console.log(err.message)} `
+      );
     }
   };
 

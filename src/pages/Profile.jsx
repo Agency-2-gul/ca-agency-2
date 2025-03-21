@@ -24,7 +24,7 @@ const Profile = () => {
       await signOut(auth);
       navigate('/');
     } catch (err) {
-      setError(`Kunne ikke logge ut: ${err.message}`);
+      setError(`Kunne ikke logge ut. Prøv igjen. ${console.log(err.message)}`);
     }
   };
 
@@ -51,7 +51,9 @@ const Profile = () => {
       await deleteUser(auth.currentUser);
       navigate('/');
     } catch (err) {
-      setError(`Kunne ikke slette brukeren: ${err.message}`);
+      setError(
+        `Kunne ikke slette brukeren. Passordet kan være feil, eller du må logge inn på nytt. ${console.log(err.message)}`
+      );
     } finally {
       setIsReauthenticating(false);
     }
