@@ -7,7 +7,7 @@ import { FaGlassWater } from 'react-icons/fa6';
 const CalorieTracker = () => {
   return (
     <div
-      className="h-[310px] bg-cover bg-center flex items-center justify-center"
+      className="relative h-[310px] bg-cover bg-center flex items-center justify-center z-[-10]"
       style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
       <div
@@ -19,7 +19,7 @@ const CalorieTracker = () => {
         </div>
         {/* Right Side: Text Content */}
         <div
-          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-4 text-sm"
+          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-4 text-sm z-1"
           style={{ color: '#333333' }}
         >
           {/* Grunnmål */}

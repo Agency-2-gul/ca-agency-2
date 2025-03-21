@@ -9,12 +9,12 @@ const CalorieProgress = ({ totalCalories, consumedCalories }) => {
   const idCSS = 'orangeGradient';
 
   return (
-    <div className="flex flex-col items-start ml-6 rounded-xl">
+    <div className="relative flex flex-col items-start ml-6 rounded-xl">
       <h2 className="text-xl font-bold pb-2" style={{ color: '#333333' }}>
         Kalorier
       </h2>
       <div
-        className="relative w-24 h-24"
+        className="relative w-24 h-24 z-1"
         style={{ width: '140px', height: '140px' }}
       >
         {/* Progress Circle */}
