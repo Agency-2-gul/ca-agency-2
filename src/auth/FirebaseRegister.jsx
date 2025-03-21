@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut, signInWithEmailAndPassword, deleteUser } from "firebase/auth";
+import { useState, useEffect } from 'react';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+  signInWithEmailAndPassword,
+  deleteUser,
+} from 'firebase/auth';
 
 const FirebaseRegister = ({ setIsRegistering }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [verificationSent, setVerificationSent] = useState(false);
   const [timeLeft, setTimeLeft] = useState(600);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -12,10 +19,14 @@ const FirebaseRegister = ({ setIsRegistering }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     const auth = getAuth();
-    setError("");
+    setError('');
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       await sendEmailVerification(user);
@@ -41,14 +52,18 @@ const FirebaseRegister = ({ setIsRegistering }) => {
   useEffect(() => {
     if (timeLeft === 0 && userToDelete) {
       const auth = getAuth();
-      
-      signInWithEmailAndPassword(auth, userToDelete.email, userToDelete.password)
+
+      signInWithEmailAndPassword(
+        auth,
+        userToDelete.email,
+        userToDelete.password
+      )
         .then((userCredential) => {
           const user = userCredential.user;
           return deleteUser(user);
         })
-        .then(() => console.log("User deleted due to non-verification"))
-        .catch((err) => console.error("Error deleting user:", err));
+        .then(() => console.log('User deleted due to non-verification'))
+        .catch((err) => console.error('Error deleting user:', err));
     }
   }, [timeLeft, userToDelete]);
 
@@ -64,10 +79,12 @@ const FirebaseRegister = ({ setIsRegistering }) => {
       {verificationSent ? (
         <div className="text-center">
           <p className="text-blue-500 font-semibold">
-            Gå til din mail og klikk på verifiseringslenken for å aktivere kontoen din.
+            Gå til din mail og klikk på verifiseringslenken for å aktivere
+            kontoen din.
           </p>
           <p className="mt-2 text-red-500">
-            Du har {Math.floor(timeLeft / 60)} minutter og {timeLeft % 60} sekunder igjen før kontoen slettes.
+            Du har {Math.floor(timeLeft / 60)} minutter og {timeLeft % 60}{' '}
+            sekunder igjen før kontoen slettes.
           </p>
 
           <div className="flex justify-center mt-4">
@@ -91,15 +108,25 @@ const FirebaseRegister = ({ setIsRegistering }) => {
                 strokeDashoffset="25"
                 transform="rotate(-90 50 50)"
               />
-              <text x="50" y="55" fontSize="16" textAnchor="middle" fill="black">
-                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+              <text
+                x="50"
+                y="55"
+                fontSize="16"
+                textAnchor="middle"
+                fill="black"
+              >
+                {Math.floor(timeLeft / 60)}:
+                {(timeLeft % 60).toString().padStart(2, '0')}
               </text>
             </svg>
           </div>
 
           <p className="mt-4">
-            Har du verifisert brukeren din?{" "}
-            <button onClick={() => setIsRegistering(false)} className="text-blue-500 underline">
+            Har du verifisert brukeren din?{' '}
+            <button
+              onClick={() => setIsRegistering(false)}
+              className="text-blue-500 underline"
+            >
               Logg inn her
             </button>
           </p>
@@ -123,7 +150,10 @@ const FirebaseRegister = ({ setIsRegistering }) => {
             required
           />
 
-          <button type="submit" className="bg-black text-white p-2 rounded mb-2 cursor-pointer">
+          <button
+            type="submit"
+            className="bg-black text-white p-2 rounded mb-2 cursor-pointer"
+          >
             Registrer
           </button>
 

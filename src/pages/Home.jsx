@@ -1,5 +1,11 @@
+import CalorieTracker from '../components/home/CalorieTracker';
+
 const Home = () => {
-  return <div>Oversikt oversikt</div>;
+  return (
+    <div>
+      <CalorieTracker />
+    </div>
+  );
 };
 
 export default Home;
