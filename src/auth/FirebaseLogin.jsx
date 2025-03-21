@@ -38,8 +38,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
 
       setSuccess('Innlogging vellykket!');
     } catch (err) {
-      console.error('Login error:', err);
-      setError('E-post eller passord er feil');
+      setError(`E-post eller passord er feil ${console.log(err.message)}`);
     }
 
     setLoading(false);
@@ -115,6 +114,7 @@ const FirebaseLogin = ({ setIsRegistering }) => {
           </button>
         </p>
       </form>
+
 
       {showForgotPassword && (
         <FirebaseForgotPassword setShowForgotPassword={setShowForgotPassword} />

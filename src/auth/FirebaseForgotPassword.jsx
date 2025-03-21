@@ -1,27 +1,29 @@
-import { useState } from "react";
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { useState } from 'react';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 const FirebaseForgotPassword = ({ setShowForgotPassword }) => {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     if (!email) {
-      setError("Skriv inn e-posten din for å tilbakestille passordet.");
+      setError('Skriv inn e-posten din for å tilbakestille passordet.');
       return;
     }
 
     try {
       const auth = getAuth();
       await sendPasswordResetEmail(auth, email);
-      setSuccess("En e-post for tilbakestilling av passord er sendt.");
+      setSuccess('En e-post for tilbakestilling av passord er sendt.');
     } catch (err) {
-      setError("Kunne ikke sende tilbakestillings-e-post. Sjekk at e-posten er riktig.");
+      setError(
+        `Kunne ikke sende tilbakestillings-e-post. Sjekk at e-posten er riktig. ${console.log(err.message)} `
+      );
     }
   };
 
@@ -43,7 +45,10 @@ const FirebaseForgotPassword = ({ setShowForgotPassword }) => {
             required
           />
 
-          <button type="submit" className="bg-black text-white p-2 rounded cursor-pointer">
+          <button
+            type="submit"
+            className="bg-black text-white p-2 rounded cursor-pointer"
+          >
             Send tilbakestillings-e-post
           </button>
         </form>

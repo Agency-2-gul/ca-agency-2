@@ -27,7 +27,7 @@ const FirebaseAuth = () => {
 
   return (
     isOpen && (
-      <div className="fixed inset-0 flex items-center justify-center">
+      <div className="fixed inset-0 flex items-center justify-center z-50">
         <video
           autoPlay
           loop
@@ -37,8 +37,11 @@ const FirebaseAuth = () => {
           <source src={videoBg} type="video/mp4" />
           Din nettleser støtter ikke videoelementet.
         </video>
+
         <div className="absolute inset-0 bg-black/75"></div>
-        <div className="relative z-10 bg-white/85 bg-opacity-80 p-6 rounded-lg shadow-lg w-md">
+        <div className="relative bg-white/85 bg-opacity-80 p-6 rounded-lg shadow-lg w-md">
+
+
           {isRegistering ? (
             <FirebaseRegister setIsRegistering={setIsRegistering} />
           ) : (
