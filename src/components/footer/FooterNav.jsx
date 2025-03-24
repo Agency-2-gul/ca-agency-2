@@ -36,7 +36,7 @@ export default function FooterNav() {
         </svg>
         <div className="icon-div" onClick={() => setIsOpen(!isOpen)}>
           <FaCirclePlus
-            className="center-icon"
+            className={`center-icon transition-transform duration-300 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
             style={{ fill: 'url(#gradientId)' }}
           />
         </div>
