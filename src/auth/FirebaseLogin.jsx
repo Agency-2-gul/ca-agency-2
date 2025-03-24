@@ -115,7 +115,6 @@ const FirebaseLogin = ({ setIsRegistering }) => {
         </p>
       </form>
 
-
       {showForgotPassword && (
         <FirebaseForgotPassword setShowForgotPassword={setShowForgotPassword} />
       )}

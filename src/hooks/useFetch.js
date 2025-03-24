@@ -1,16 +1,24 @@
-import { useState, useEffect, useCallBack } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const useFetch = (url, options = {}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = useCallBack(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_KASSALAPP_TOKEN}`,
+          ...options.headers,
+        },
+      });
+
       if (!response.ok) {
         throw new Error(`Fetch failed: ${response.status}`);
       }

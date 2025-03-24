@@ -178,7 +178,7 @@ const FirebaseRegister = ({ setIsRegistering }) => {
             setVerificationSent(false);
           }
         })
-      
+
         .catch((err) => {
           console.error('Error during deletion process:', err);
           // Still show deleted state even if there was an error
