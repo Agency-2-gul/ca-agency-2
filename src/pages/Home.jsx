@@ -1,10 +1,10 @@
-import RenderHome from '../components/home/RenderHome';
+import CalorieTracker from '../components/home/CalorieTracker';
+
 const Home = () => {
   return (
-    <>
-      <h1>Oversikt</h1>
-      <RenderHome />
-    </>
+    <div>
+      <CalorieTracker />
+    </div>
   );
 };
 

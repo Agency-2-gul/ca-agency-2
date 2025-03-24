@@ -87,7 +87,7 @@ const Profile = () => {
         ) : (
           <div className="mt-4">
             <p className="text-sm text-gray-600 mb-2">
-              Skriv inn: <strong>&quot Jeg vil slette min konto &quot</strong>{' '}
+              Skriv inn: <strong>&quot;Jeg vil slette min konto&quot;</strong>{' '}
               for å bekrefte.
             </p>
             <input
