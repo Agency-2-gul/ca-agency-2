@@ -67,8 +67,8 @@ const FooterPopup = ({ isOpen }) => {
       setSuccess(true);
 
       setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
+        window.location.reload();
+      }, 1000);
     } catch (err) {
       console.error('Error logging weight:', err);
       setError('Feil ved lagring. Sjekk tillatelser.');
@@ -247,7 +247,6 @@ const FooterPopup = ({ isOpen }) => {
               </div>
             </div>
           </div>
-
           {error && (
             <div className="px-4 -mt-1">
               <span className="text-red-500 text-sm flex items-center">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import WeightManagement from '../weight-tracker/WeightManagement';
 import {
   getFirestore,
   collection,
@@ -87,6 +88,7 @@ const ProfileHeader = ({ user }) => {
               <p className="text-gray-500 text-sm">Ingen vektdata registrert</p>
             </div>
           )}
+          <WeightManagement />
         </div>
       </div>
     </div>
