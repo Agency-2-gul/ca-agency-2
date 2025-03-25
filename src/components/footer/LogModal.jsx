@@ -1,10 +1,20 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import useFetch from '../../hooks/useFetch';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
 
-const LogModal = ({ onClose }) => {
+const LogModal = ({ setIsModalOpen }) => {
+  const onClose = () => setIsModalOpen(false);
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [user, setUser] = useState(null);
+  console.log(user);
 
   const options = useMemo(() => ({}), []);
 
@@ -18,9 +28,19 @@ const LogModal = ({ onClose }) => {
   const varer = data?.data || [];
 
   useEffect(() => {
-    console.log('searchQuery:', searchQuery);
-    console.log('Fetched data:', data);
-  }, [searchQuery, data]);
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        console.log('user logged in:', currentUser);
+        setUser(currentUser);
+      } else {
+        console.log('No user registered');
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -29,11 +49,49 @@ const LogModal = ({ onClose }) => {
     }
   };
 
+  const handleSelectedProducts = (product) => {
+    setSelectedProducts((prevSelected) => {
+      const isAlreadySelected = prevSelected.some(
+        (p) => p.name === product.name
+      );
+      if (isAlreadySelected) {
+        return prevSelected.filter((p) => p.name !== product.name);
+      } else {
+        return [...prevSelected, product];
+      }
+    });
+  };
+
+  console.log(selectedProducts);
+
+  const logProducts = async () => {
+    if (!user) {
+      alert('Du må være logget inn for å logge varer.');
+      return;
+    }
+    try {
+      const auth = getAuth();
+      const db = getFirestore();
+
+      const cleanProducts = selectedProducts.map((product) => ({
+        name: product.name,
+      }));
+      if (auth) {
+        await addDoc(collection(db, 'manualLogs'), {
+          userId: user.uid,
+          products: cleanProducts,
+          timestamp: serverTimestamp(),
+          date: new Date().toISOString().split('T')[0],
+        });
+      }
+    } catch (err) {
+      alert('Kunne ikke logge varer. Prøv igjen senere. ' + err);
+    }
+  };
 
   return (
     <div className="absolute bg-white w-[400px] max-h-[400px] overflow-y-auto top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl shadow-lg p-6 z-1000">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Logg Vare</h1>
-
 
       {/* Søkefelt */}
       <div>
@@ -76,7 +134,18 @@ const LogModal = ({ onClose }) => {
             </h2>
             <ul className="list-disc list-inside space-y-1">
               {varer.map((item, index) => (
-                <li key={index}>{item.name}</li>
+                <li
+                  onClick={() => handleSelectedProducts(item)}
+                  key={index}
+                  className="flex items-center gap-2 list-none pb-2 border-b border-gray-300 last:border-none"
+                >
+                  <img
+                    src={item.image}
+                    alt="Product image"
+                    className="w-8 h-8 rounded-lg"
+                  />
+                  <span>{item.name}</span>
+                </li>
               ))}
             </ul>
           </div>
@@ -91,7 +160,10 @@ const LogModal = ({ onClose }) => {
         >
           Avbryt
         </button>
-        <button className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition">
+        <button
+          onClick={logProducts}
+          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+        >
           Logg
         </button>
       </div>
