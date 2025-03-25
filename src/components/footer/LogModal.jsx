@@ -73,15 +73,14 @@ const LogModal = ({ setIsModalOpen }) => {
       const auth = getAuth();
       const db = getFirestore();
 
-      const cleanProducts = selectedProducts.map((product) => ({
-        name: product.name,
+      const cleanProducts = selectedProducts.map(({ name, price }) => ({
+        name: name || 'Unknown Product', // Fallback for missing name
+        price: price || 0, // Fallback for missing price
       }));
       if (auth) {
         await addDoc(collection(db, 'manualLogs'), {
           userId: user.uid,
           products: cleanProducts,
-          timestamp: serverTimestamp(),
-          date: new Date().toISOString().split('T')[0],
         });
       }
     } catch (err) {
