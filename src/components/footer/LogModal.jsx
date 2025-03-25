@@ -7,6 +7,7 @@ import {
   addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
+import { FaCheckCircle } from 'react-icons/fa';
 
 const LogModal = ({ setIsModalOpen }) => {
   const onClose = () => setIsModalOpen(false);
@@ -73,9 +74,15 @@ const LogModal = ({ setIsModalOpen }) => {
       const auth = getAuth();
       const db = getFirestore();
 
-      const cleanProducts = selectedProducts.map(({ name, price }) => ({
+      const cleanProducts = selectedProducts.map(({ name, id, nutrition }) => ({
+        id: id || 'Unknown ID', // Fallback for missing id
         name: name || 'Unknown Product', // Fallback for missing name
-        price: price || 0, // Fallback for missing price
+        nutrition: nutrition
+          ? nutrition.map(({ display_name, amount, unit }) => ({
+              name: display_name,
+              value: `${amount} ${unit}`,
+            }))
+          : [], // Fallback to empty array if nutrition is missing
       }));
       if (auth) {
         await addDoc(collection(db, 'manualLogs'), {
@@ -143,7 +150,12 @@ const LogModal = ({ setIsModalOpen }) => {
                     alt="Product image"
                     className="w-8 h-8 rounded-lg"
                   />
-                  <span>{item.name}</span>
+                  <div className="flex items-center justify-between w-full">
+                    <span>{item.name}</span>
+                    {selectedProducts.some((p) => p.name === item.name) && (
+                      <FaCheckCircle className="text-green-500" />
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
