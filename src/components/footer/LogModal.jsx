@@ -70,6 +70,10 @@ const LogModal = ({ setIsModalOpen }) => {
       alert('Du må være logget inn for å logge varer.');
       return;
     }
+    if (!selectedProducts || selectedProducts.length === 0) {
+      alert('Du må velge minst én vare for å logge.');
+      return;
+    }
     try {
       const auth = getAuth();
       const db = getFirestore();
@@ -148,7 +152,7 @@ const LogModal = ({ setIsModalOpen }) => {
                   <img
                     src={item.image}
                     alt="Product image"
-                    className="w-8 h-8 rounded-lg"
+                    className="object-contain aspect-3/2 h-8 w-auto rounded-lg"
                   />
                   <div className="flex items-center justify-between w-full">
                     <span>{item.name}</span>
