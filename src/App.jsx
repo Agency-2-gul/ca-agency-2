@@ -3,6 +3,7 @@ import Layout from './Layout';
 import Home from './pages/Home';
 import Recipes from './pages/Recipes';
 import Profile from './pages/Profile';
+import ProductPage from './components/product/ProductPage';
 
 const App = () => (
   <Routes>
@@ -10,6 +11,7 @@ const App = () => (
       <Route index element={<Home />} />
       <Route path="recipes" element={<Recipes />} />
       <Route path="profile" element={<Profile />} />
+      <Route path="product/:id" element={<ProductPage />} />
     </Route>
   </Routes>
 );
