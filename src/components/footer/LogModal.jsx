@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useEffect } from 'react';
 import useFetch from '../../hooks/useFetch';
 
@@ -28,9 +29,11 @@ const LogModal = ({ onClose }) => {
     }
   };
 
+
   return (
     <div className="absolute bg-white w-[400px] max-h-[400px] overflow-y-auto top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl shadow-lg p-6 z-1000">
       <h1 className="text-xl font-semibold text-gray-800 mb-4">Logg Vare</h1>
+
 
       {/* Søkefelt */}
       <div>
