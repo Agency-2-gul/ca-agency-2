@@ -21,9 +21,8 @@ export default function FooterNav() {
           <span className="icon-text">Oversikt</span>
         </Link>
 
-        <Link className="icon-div" to="/recipes">
-          <FaBook className="icon" />{' '}
-          <span className="icon-text">Oppskrifter</span>
+        <Link className="icon-div" to="/diary">
+          <FaBook className="icon" /> <span className="icon-text">Dagbok</span>
         </Link>
         <svg width="0" height="0" className="absolute">
           <defs>
