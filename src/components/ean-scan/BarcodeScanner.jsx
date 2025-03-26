@@ -9,7 +9,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // default to back
+  const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // back camera default
   const [instructionText, setInstructionText] = useState(
     'Hold strekkoden innenfor rammen'
   );
@@ -22,7 +22,6 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     let stream;
     let timeout;
 
-    // After 5 seconds, update instructions if not scanned
     timeout = setTimeout(() => {
       if (!hasScannedRef.current) {
         setInstructionText('Prøv frontkamera hvis koden ikke går på bakkamera');
@@ -149,23 +148,23 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         </div>
       </div>
 
-      {/* Toggle Camera */}
-      <button
-        onClick={toggleCamera}
-        className="mt-4 px-4 py-2 border border-white text-white rounded-lg font-medium z-30"
-      >
-        Bytt kamera
-      </button>
+      {/* Buttons */}
+      <div className="flex flex-col gap-2 mt-4 z-40">
+        <button
+          onClick={toggleCamera}
+          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80"
+        >
+          Bytt kamera
+        </button>
 
-      {/* Close Button */}
-      <button
-        onClick={onClose}
-        className="mt-2 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
-      >
-        Lukk
-      </button>
+        <button
+          onClick={onClose}
+          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors"
+        >
+          Lukk
+        </button>
+      </div>
 
-      {/* Scan Line Animation */}
       <style>
         {`
           @keyframes scan-line {
