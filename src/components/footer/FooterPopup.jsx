@@ -42,9 +42,14 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
             </button>
             <button
               onClick={() => setScannerOpen(true)}
-              className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow"
+              className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow cursor-pointer"
             >
-              <span>Scan varer</span>
+              <img
+                src="src/assets/Barcode_Icon.png"
+                alt="Barcode icon"
+                className="mb-2"
+              />
+              <span className="text-[#E64D20]">Strekkodeskanning</span>
             </button>
           </div>
 
