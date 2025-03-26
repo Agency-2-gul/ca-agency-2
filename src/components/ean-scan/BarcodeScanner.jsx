@@ -10,10 +10,11 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [cameraFacingMode, setCameraFacingMode] = useState('user'); // Default to front camera
+  const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // default to back camera
   const [instructionText, setInstructionText] = useState(
     'Hold strekkoden innenfor rammen'
   );
+  const [buttonLabel, setButtonLabel] = useState('Frontkamera');
 
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
@@ -30,7 +31,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
     const startScanner = async () => {
       try {
-        await stopCamera(); // ensure previous stream is cleaned up
+        await stopCamera();
 
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: cameraFacingMode } },
@@ -104,9 +105,10 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   };
 
   const toggleCamera = () => {
-    setCameraFacingMode((prev) =>
-      prev === 'environment' ? 'user' : 'environment'
-    );
+    const nextMode =
+      cameraFacingMode === 'environment' ? 'user' : 'environment';
+    setCameraFacingMode(nextMode);
+    setButtonLabel(nextMode === 'environment' ? 'Frontkamera' : 'Bakkamera');
     setInstructionText('Hold strekkoden innenfor rammen');
     hasScannedRef.current = false;
   };
@@ -161,10 +163,10 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         {/* Toggle Camera Button (only on mobile) */}
         <button
           onClick={toggleCamera}
-          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80 flex items-center justify-center gap-2 block sm:hidden"
+          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80 flex items-center justify-center gap-2 block md:hidde cursor-pointer"
         >
           <RiCameraSwitchLine />
-          {cameraFacingMode === 'user' ? 'Frontkamera' : 'Bakkamera'}
+          {buttonLabel}
         </button>
 
         {/* Close Button */}
@@ -173,7 +175,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
             await stopCamera();
             onClose();
           }}
-          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors cursor-pointer"
         >
           Lukk
         </button>
