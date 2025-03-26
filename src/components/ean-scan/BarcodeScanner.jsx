@@ -10,7 +10,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // default to back camera
+  const [cameraFacingMode, setCameraFacingMode] = useState('environment');
   const [instructionText, setInstructionText] = useState(
     'Hold strekkoden innenfor rammen'
   );
@@ -69,9 +69,9 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
     return () => {
       clearTimeout(timeout);
-      stopCamera();
+      stopCamera(); // ✅ always stop when component unmounts
     };
-  }, [cameraFacingMode, navigate, onClose, onScanSuccess]);
+  }, [cameraFacingMode]);
 
   const fetchProduct = async (decodedText) => {
     try {
@@ -115,10 +115,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
   const stopCamera = async () => {
     try {
-      if (
-        codeReaderRef.current &&
-        typeof codeReaderRef.current.reset === 'function'
-      ) {
+      if (codeReaderRef.current?.reset) {
         await codeReaderRef.current.reset();
         codeReaderRef.current = null;
       }
@@ -158,30 +155,26 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         </div>
       </div>
 
-      {/* Buttons */}
       <div className="flex flex-col gap-2 mt-4 z-40">
-        {/* Toggle Camera Button (only on mobile) */}
         <button
           onClick={toggleCamera}
-          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80 flex items-center justify-center gap-2 block md:hidde cursor-pointer"
+          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80 flex items-center justify-center gap-2 block md:hidden"
         >
           <RiCameraSwitchLine />
           {buttonLabel}
         </button>
 
-        {/* Close Button */}
         <button
           onClick={async () => {
             await stopCamera();
             onClose();
           }}
-          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors cursor-pointer"
+          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors"
         >
           Lukk
         </button>
       </div>
 
-      {/* Animation */}
       <style>
         {`
           @keyframes scan-line {
