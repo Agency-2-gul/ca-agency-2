@@ -89,9 +89,10 @@ const LogModal = ({ setIsModalOpen }) => {
           : [], // Fallback to empty array if nutrition is missing
       }));
       if (auth) {
-        await addDoc(collection(db, 'manualLogs'), {
+        await addDoc(collection(db, 'foodLogs'), {
           userId: user.uid,
           products: cleanProducts,
+          date: serverTimestamp(),
         });
       }
     } catch (err) {

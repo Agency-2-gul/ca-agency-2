@@ -1,10 +1,57 @@
+import React, { useState, useEffect } from 'react';
 import calorieTrackerImg from '../../assets/calorie-tracker.png';
 import CalorieProgress from './CalorieProgressCircle';
-import { FaFontAwesomeFlag } from 'react-icons/fa';
-import { FaAppleAlt } from 'react-icons/fa';
+import { FaFontAwesomeFlag, FaAppleAlt } from 'react-icons/fa';
 import { FaGlassWater } from 'react-icons/fa6';
+import {
+  getTodaysLoggedFoods,
+  extractCaloriesFromLoggedFood,
+} from '../../utils/foodLogs';
+import { getAuth } from 'firebase/auth';
 
 const CalorieTracker = () => {
+  // State for managing calorie goal and consumed calories
+  const [dailyCalorieGoal, setDailyCalorieGoal] = useState(2800);
+  const [consumedCalories, setConsumedCalories] = useState(0);
+  const [isGoalMenuOpen, setIsGoalMenuOpen] = useState(false);
+
+  // Effect to fetch logged foods from Firebase
+  useEffect(() => {
+    const fetchLoggedFoods = async () => {
+      try {
+        const user = getAuth().currentUser;
+        console.log('Current user:', getAuth().currentUser);
+        if (!user) return;
+
+        const logs = await getTodaysLoggedFoods(user.uid);
+
+        let total = 0;
+        logs.forEach((log) => {
+          const products = extractCaloriesFromLoggedFood(log);
+          products.forEach((product) => {
+            total += product.calories;
+          });
+        });
+
+        setConsumedCalories(total);
+      } catch (error) {
+        console.error('Error fetching logged foods:', error);
+      }
+    };
+
+    fetchLoggedFoods();
+  }, []);
+
+  // Handler to update daily calorie goal
+  const handleUpdateGoal = (newGoal) => {
+    const parsedGoal = parseInt(newGoal, 10);
+    if (!isNaN(parsedGoal) && parsedGoal > 0) {
+      setDailyCalorieGoal(parsedGoal);
+      setIsGoalMenuOpen(false);
+      // TODO: Save goal to user's profile in Firebase
+    }
+  };
+
   return (
     <div
       className="relative h-[310px] bg-cover bg-center flex items-center justify-center z-[-10]"
@@ -15,7 +62,10 @@ const CalorieTracker = () => {
         style={{ backgroundColor: '#F7F7F7' }}
       >
         <div>
-          <CalorieProgress totalCalories={2800} consumedCalories={2362} />
+          <CalorieProgress
+            totalCalories={dailyCalorieGoal}
+            consumedCalories={consumedCalories}
+          />
         </div>
         {/* Right Side: Text Content */}
         <div
@@ -29,7 +79,7 @@ const CalorieTracker = () => {
             </span>
             <div className="flex flex-col items-start">
               <p className="font-medium">Grunnmål</p>
-              <p className="font-bold">2800</p>
+              <p className="font-bold">{dailyCalorieGoal}</p>
             </div>
           </div>
 
@@ -40,7 +90,7 @@ const CalorieTracker = () => {
             </span>
             <div className="flex flex-col items-start">
               <p className="font-medium">Mat</p>
-              <p className="font-bold">2362</p>
+              <p className="font-bold">{consumedCalories}</p>
             </div>
           </div>
 
