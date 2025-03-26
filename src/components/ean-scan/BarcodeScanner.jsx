@@ -8,6 +8,9 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
+  // ✅ Detect if device is mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   useEffect(() => {
     let scanner;
 
@@ -31,7 +34,6 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           video: { facingMode: 'environment' },
         });
 
-        // Stop initial stream – html5-qrcode takes over
         stream.getTracks().forEach((track) => track.stop());
 
         scanner = new Html5Qrcode('scanner');
@@ -40,8 +42,10 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         await scanner.start(
           { facingMode: 'environment' },
           {
-            fps: 10,
-            qrbox: { width: 300, height: 300 },
+            fps: isMobile ? 15 : 10,
+            qrbox: isMobile
+              ? { width: 360, height: 360 }
+              : { width: 300, height: 300 },
             disableFlip: true,
             formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
           },
@@ -105,7 +109,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
       }
       html5QrCodeRef.current = null;
     };
-  }, [navigate, onClose, onScanSuccess]);
+  }, [navigate, onClose, onScanSuccess, isMobile]);
 
   return (
     <div className="relative p-4 flex flex-col justify-center items-center w-full">
@@ -124,13 +128,19 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           </div>
         )}
 
-        {/* 🧭 Instruction Text */}
-        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none">
-          Hold strekkoden innenfor rammen
+        {/* 🧭 Device-Specific Instruction */}
+        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none text-center px-2">
+          {isMobile
+            ? 'Tips: Hold mobilen rolig og litt unna strekkoden'
+            : 'Hold strekkoden innenfor rammen'}
         </div>
 
         {/* 🔲 Animated Frame */}
-        <div className="absolute w-[300px] h-[300px] border-4 border-white rounded-md pointer-events-none z-20">
+        <div
+          className={`absolute border-4 border-white rounded-md pointer-events-none z-20 ${
+            isMobile ? 'w-[360px] h-[360px]' : 'w-[300px] h-[300px]'
+          }`}
+        >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E64D20] to-[#F67B39] animate-scan-line" />
         </div>
       </div>
@@ -143,7 +153,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         Lukk
       </button>
 
-      {/* 🔁 Animation Style */}
+      {/* 🔁 Scan Line Animation */}
       <style>
         {`
           @keyframes scan-line {
