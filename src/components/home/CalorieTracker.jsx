@@ -20,7 +20,6 @@ const CalorieTracker = () => {
     const fetchLoggedFoods = async () => {
       try {
         const user = getAuth().currentUser;
-        console.log('Current user:', getAuth().currentUser);
         if (!user) return;
 
         const logs = await getTodaysLoggedFoods(user.uid);
