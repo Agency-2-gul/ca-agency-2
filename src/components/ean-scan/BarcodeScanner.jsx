@@ -8,9 +8,6 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  // ✅ Detect if device is mobile
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
   useEffect(() => {
     let scanner;
 
@@ -20,6 +17,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
       scannerElement.innerHTML = '';
       scannerElement.style.background = 'black';
+      scannerElement.style.minHeight = '256px';
 
       try {
         const permissionStatus = await navigator.permissions.query({
@@ -31,7 +29,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
+          video: true, // ✅ more compatible with iOS
         });
 
         stream.getTracks().forEach((track) => track.stop());
@@ -42,11 +40,8 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         await scanner.start(
           { facingMode: 'environment' },
           {
-            fps: isMobile ? 15 : 10,
-            qrbox: isMobile
-              ? { width: 360, height: 360 }
-              : { width: 300, height: 300 },
-            disableFlip: true,
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
             formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
           },
           async (decodedText) => {
@@ -109,43 +104,37 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
       }
       html5QrCodeRef.current = null;
     };
-  }, [navigate, onClose, onScanSuccess, isMobile]);
+  }, [navigate, onClose, onScanSuccess]);
 
   return (
-    <div className="relative p-4 flex flex-col justify-center items-center w-full">
-      {/* Camera Preview Container */}
-      <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex flex-col justify-center items-center min-h-[400px]">
+    <div className="p-4 flex flex-col items-center justify-center">
+      {/* Camera View */}
+      <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex justify-center items-center min-h-[400px]">
         <div
           id="scanner"
           className="w-full h-full"
           style={{ position: 'relative' }}
         />
 
-        {/* ⏳ Loading Overlay */}
+        {/* Loading Spinner */}
         {loading && (
           <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-30">
             <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-white" />
           </div>
         )}
 
-        {/* 🧭 Device-Specific Instruction */}
-        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none text-center px-2">
-          {isMobile
-            ? 'Tips: Hold mobilen rolig og litt unna strekkoden'
-            : 'Hold strekkoden innenfor rammen'}
+        {/* Instruction */}
+        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none">
+          Hold strekkoden innenfor rammen
         </div>
 
-        {/* 🔲 Animated Frame */}
-        <div
-          className={`absolute border-4 border-white rounded-md pointer-events-none z-20 ${
-            isMobile ? 'w-[360px] h-[360px]' : 'w-[300px] h-[300px]'
-          }`}
-        >
+        {/* Scanner Frame */}
+        <div className="absolute w-[250px] h-[250px] border-4 border-white rounded-md pointer-events-none z-20">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E64D20] to-[#F67B39] animate-scan-line" />
         </div>
       </div>
 
-      {/* ❌ Close Button */}
+      {/* Close Button */}
       <button
         onClick={onClose}
         className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
@@ -153,7 +142,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         Lukk
       </button>
 
-      {/* 🔁 Scan Line Animation */}
+      {/* Scan Line Animation */}
       <style>
         {`
           @keyframes scan-line {
