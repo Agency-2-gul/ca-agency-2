@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,21 +6,20 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const html5QrCodeRef = useRef(null);
   const hasScannedRef = useRef(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Detect if device is mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   useEffect(() => {
     let scanner;
 
     const startScanner = async () => {
       const scannerElement = document.getElementById('scanner');
-
-      if (!scannerElement) {
-        console.warn('Scanner container not found');
-        return;
-      }
+      if (!scannerElement) return;
 
       scannerElement.innerHTML = '';
       scannerElement.style.background = 'black';
-      scannerElement.style.minHeight = '256px';
 
       try {
         const permissionStatus = await navigator.permissions.query({
@@ -32,9 +31,10 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: { facingMode: 'environment' },
         });
-        if (stream) stream.getTracks().forEach((track) => track.stop());
+
+        stream.getTracks().forEach((track) => track.stop());
 
         scanner = new Html5Qrcode('scanner');
         html5QrCodeRef.current = scanner;
@@ -42,8 +42,11 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         await scanner.start(
           { facingMode: 'environment' },
           {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
+            fps: isMobile ? 15 : 10,
+            qrbox: isMobile
+              ? { width: 360, height: 360 }
+              : { width: 300, height: 300 },
+            disableFlip: true,
             formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
           },
           async (decodedText) => {
@@ -68,8 +71,8 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
               const product = response.data?.products?.[0];
 
               if (product?.id) {
-                onClose(); // ✅ Close modal
-                onScanSuccess(); // ✅ Close footer via prop
+                onClose();
+                onScanSuccess();
                 navigate(`/product/${product.id}`, { state: { product } });
               } else {
                 alert('Fant ingen produktdata');
@@ -83,6 +86,8 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           },
           (err) => console.warn('Scan error:', err)
         );
+
+        setLoading(false);
       } catch (err) {
         console.error('Camera access error:', err);
         alert('Du må gi tilgang til kameraet.');
@@ -90,11 +95,12 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     };
 
     const timeout = setTimeout(() => {
-      startScanner();
-    }, 200);
+      requestAnimationFrame(startScanner);
+    }, 300);
 
     return () => {
       clearTimeout(timeout);
+      setLoading(true);
       if (html5QrCodeRef.current) {
         html5QrCodeRef.current
           .stop()
@@ -103,21 +109,62 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
       }
       html5QrCodeRef.current = null;
     };
-  }, [navigate, onClose, onScanSuccess]);
+  }, [navigate, onClose, onScanSuccess, isMobile]);
 
   return (
-    <div className="p-4">
-      <div
-        id="scanner"
-        className="w-full h-auto rounded"
-        style={{ position: 'relative', zIndex: 20 }}
-      />
+    <div className="relative p-4 flex flex-col justify-center items-center w-full">
+      {/* Camera Preview Container */}
+      <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex flex-col justify-center items-center min-h-[400px]">
+        <div
+          id="scanner"
+          className="w-full h-full"
+          style={{ position: 'relative' }}
+        />
+
+        {/* ⏳ Loading Overlay */}
+        {loading && (
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-30">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-white" />
+          </div>
+        )}
+
+        {/* 🧭 Device-Specific Instruction */}
+        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none text-center px-2">
+          {isMobile
+            ? 'Tips: Hold mobilen rolig og litt unna strekkoden'
+            : 'Hold strekkoden innenfor rammen'}
+        </div>
+
+        {/* 🔲 Animated Frame */}
+        <div
+          className={`absolute border-4 border-white rounded-md pointer-events-none z-20 ${
+            isMobile ? 'w-[360px] h-[360px]' : 'w-[300px] h-[300px]'
+          }`}
+        >
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E64D20] to-[#F67B39] animate-scan-line" />
+        </div>
+      </div>
+
+      {/* ❌ Close Button */}
       <button
         onClick={onClose}
-        className="mt-4 px-4 py-2 bg-gray-200 rounded-lg w-full cursor-pointer"
+        className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
       >
         Lukk
       </button>
+
+      {/* 🔁 Scan Line Animation */}
+      <style>
+        {`
+          @keyframes scan-line {
+            0% { top: 0; }
+            100% { top: 100%; }
+          }
+          .animate-scan-line {
+            animation: scan-line 2s linear infinite alternate;
+          }
+        `}
+      </style>
     </div>
   );
 };
