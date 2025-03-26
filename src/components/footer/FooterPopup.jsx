@@ -27,10 +27,10 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
         <LogModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
       )}
       <motion.div
-        className="sticky bottom-20 bg-gradient-to-t from-[#E64D20] to-[#F67B39] left-0 w-full  shadow-xl p-6 rounded-t-2xl transition-all z-0"
+        className="fixed bottom-10 bg-gradient-to-t from-[#E64D20] to-[#F67B39] left-0 w-full h-[50vh] shadow-xl p-6 rounded-t-2xl transition-all z-0"
         initial={{ y: '100%' }}
         animate={{ y: isOpen ? 0 : '100%' }}
-        transition={{ type: 'spring', duration: 0.2, bounce: 0 }}
+        transition={{ type: 'spring', duration: 0.3, bounce: 0 }}
       >
         <div className="max-w-md mx-auto mt-2 w-full h-full flex flex-col space-y-4">
           {/* Top buttons */}
@@ -51,7 +51,7 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
           </div>
 
           {/* Bottom content */}
-          <div className="p-3 flex flex-col  gap-y-2 rounded-lg">
+          <div className="p-3 flex flex-col gap-y-2 rounded-lg">
             <div className="flex items-center bg-[#FAFAFA] gap-3 p-4 rounded-lg">
               <span>Vann</span>
             </div>
