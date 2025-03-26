@@ -1,7 +1,7 @@
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '/firebase'; // from firebase.js in root
 
-// 🔥 Get today's food logs for a specific user
+// Get today's food logs for a specific user
 export async function getTodaysLoggedFoods(userId) {
   const foodLogsRef = collection(db, 'foodLogs');
 
@@ -21,25 +21,32 @@ export async function getTodaysLoggedFoods(userId) {
   return snapshot.docs.map((doc) => doc.data());
 }
 
-// 🔍 Extract calories from each product in a food log
+// Extract calories from each product, scaled by weight
 export function extractCaloriesFromLoggedFood(foodLog) {
   const products = foodLog.products || [];
 
   return products.map((product) => {
     const nutritionArray = product.nutrition || [];
-    const calorieEntry = nutritionArray.find((n) => n.name === 'Kalorier');
 
-    const raw = calorieEntry?.value?.replace('kcal', '').trim();
-    const calories = parseFloat(raw);
+    const calorieEntry = nutritionArray.find(
+      (n) => n.name?.toLowerCase() === 'kalorier'
+    );
+
+    const per100gRaw = calorieEntry?.value?.replace('kcal', '').trim();
+    const per100g = parseFloat(per100gRaw);
+
+    const weight = product.weight || 100;
+
+    const totalCalories = isNaN(per100g) ? 0 : (per100g / 100) * weight;
 
     return {
       ...product,
-      calories: isNaN(calories) ? 0 : calories,
+      calories: Math.round(totalCalories),
     };
   });
 }
 
-// 🍽️ Convert the full nutrition array into a key-value map
+// Convert the full nutrition array into a key-value map
 export function getNutritionDetails(product) {
   const nutritionArray = product?.nutrition || [];
 
