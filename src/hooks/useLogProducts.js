@@ -43,7 +43,7 @@ const useLogProducts = () => {
 
       await addDoc(collection(db, 'foodLogs'), {
         userId: user.uid,
-        Index: mealIndex,
+        Index: mealIndex || null,
         products: cleanProducts,
         timestamp: serverTimestamp(),
       });
