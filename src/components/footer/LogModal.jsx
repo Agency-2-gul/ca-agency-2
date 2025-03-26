@@ -1,102 +1,32 @@
-import { useState, useMemo, useEffect } from 'react';
-import useFetch from '../../hooks/useFetch';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
+import { useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
+import useProductSearch from '../../hooks/useProductSearch';
+import useLogProducts from '../../hooks/useLogProducts';
 
 const LogModal = ({ setIsModalOpen }) => {
   const onClose = () => setIsModalOpen(false);
-  const [query, setQuery] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [user, setUser] = useState(null);
+
+  const { query, setQuery, varer, loading, error, handleKeyDown } =
+    useProductSearch();
+  const { user, logProducts } = useLogProducts();
   console.log(user);
 
-  const options = useMemo(() => ({}), []);
-
-  const { data, loading, error } = useFetch(
-    searchQuery.length >= 2
-      ? `https://kassal.app/api/v1/products/?search=${searchQuery}`
-      : null,
-    options
-  );
-
-  const varer = data?.data || [];
-
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        console.log('user logged in:', currentUser);
-        setUser(currentUser);
-      } else {
-        console.log('No user registered');
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      setSearchQuery(query.trim());
-    }
-  };
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   const handleSelectedProducts = (product) => {
     setSelectedProducts((prevSelected) => {
       const isAlreadySelected = prevSelected.some(
         (p) => p.name === product.name
       );
-      if (isAlreadySelected) {
-        return prevSelected.filter((p) => p.name !== product.name);
-      } else {
-        return [...prevSelected, product];
-      }
+      return isAlreadySelected
+        ? prevSelected.filter((p) => p.name !== product.name)
+        : [...prevSelected, product];
     });
   };
 
-  console.log(selectedProducts);
-
-  const logProducts = async () => {
-    if (!user) {
-      alert('Du må være logget inn for å logge varer.');
-      return;
-    }
-    if (!selectedProducts || selectedProducts.length === 0) {
-      alert('Du må velge minst én vare for å logge.');
-      return;
-    }
-    try {
-      const auth = getAuth();
-      const db = getFirestore();
-
-      const cleanProducts = selectedProducts.map(({ name, id, nutrition }) => ({
-        id: id || 'Unknown ID', // Fallback for missing id
-        name: name || 'Unknown Product', // Fallback for missing name
-        nutrition: nutrition
-          ? nutrition.map(({ display_name, amount, unit }) => ({
-              name: display_name,
-              value: `${amount} ${unit}`,
-            }))
-          : [], // Fallback to empty array if nutrition is missing
-      }));
-      if (auth) {
-        await addDoc(collection(db, 'manualLogs'), {
-          userId: user.uid,
-          products: cleanProducts,
-        });
-      }
-    } catch (err) {
-      alert('Kunne ikke logge varer. Prøv igjen senere. ' + err);
-    }
+  const resetSelection = () => {
+    setSelectedProducts([]);
+    setQuery('');
   };
 
   return (
@@ -127,14 +57,14 @@ const LogModal = ({ setIsModalOpen }) => {
         className="overflow-y-auto mt-4 mb-4 pr-2 text-sm text-gray-700"
         style={{ maxHeight: '170px' }}
       >
-        {!searchQuery && (
+        {!query && (
           <p className="text-gray-500">
             Skriv inn et varenavn og trykk &quot;Enter&quot; for å søke 🔎
           </p>
         )}
         {loading && <p>Laster inn resultater...</p>}
         {error && <p className="text-red-500">Feil: {error}</p>}
-        {!loading && !error && varer.length === 0 && searchQuery && (
+        {!loading && !error && varer.length === 0 && query && (
           <p>Ingen resultater funnet.</p>
         )}
         {varer.length > 0 && (
@@ -145,14 +75,18 @@ const LogModal = ({ setIsModalOpen }) => {
             <ul className="list-disc list-inside space-y-1">
               {varer.map((item, index) => (
                 <li
-                  onClick={() => handleSelectedProducts(item)}
                   key={index}
-                  className="flex items-center gap-2 list-none pb-2 border-b border-gray-300 last:border-none"
+                  onClick={() => handleSelectedProducts(item)}
+                  className="flex items-center gap-2 list-none pb-2 border-b border-gray-300 last:border-none cursor-pointer"
                 >
                   <img
                     src={item.image}
                     alt="Product image"
                     className="object-contain aspect-3/2 h-8 w-auto rounded-lg"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/src/assets/react.svg';
+                    }}
                   />
                   <div className="flex items-center justify-between w-full">
                     <span>{item.name}</span>
@@ -176,7 +110,7 @@ const LogModal = ({ setIsModalOpen }) => {
           Avbryt
         </button>
         <button
-          onClick={logProducts}
+          onClick={() => logProducts(selectedProducts, resetSelection)}
           className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
         >
           Logg
