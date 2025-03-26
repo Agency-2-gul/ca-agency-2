@@ -39,7 +39,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
         const [track] = stream.getVideoTracks();
         streamTrackRef.current = track;
-        track.stop(); // let html5-qrcode handle the stream
+        track.stop(); // let html5-qrcode handle it
 
         scanner = new Html5Qrcode('scanner');
         html5QrCodeRef.current = scanner;
@@ -48,14 +48,15 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           { facingMode: 'environment' },
           {
             fps: 10,
-            qrbox: { width: 250, height: 250 },
-            formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
+            qrbox: { width: 300, height: 300 },
+            disableFlip: true,
+            formatsToSupport: [Html5QrcodeSupportedFormats.ALL], // ← Temporarily support all formats
           },
           async (decodedText) => {
             if (hasScannedRef.current) return;
             hasScannedRef.current = true;
 
-            // 🔊 Beep + vibration
+            // 🔊 Feedback
             const beep = new Audio('/beep.mp3');
             beep.play().catch(() => {});
             if (navigator.vibrate) navigator.vibrate(200);
@@ -138,9 +139,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         <div
           id="scanner"
           className="w-full h-full"
-          style={{
-            position: 'relative',
-          }}
+          style={{ position: 'relative' }}
         />
 
         {/* ⏳ Loading Overlay */}
@@ -150,18 +149,18 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           </div>
         )}
 
-        {/*  Instructions */}
+        {/* 🧭 Instructions */}
         <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none">
           Hold strekkoden innenfor rammen
         </div>
 
-        {/* Scanner Frame */}
-        <div className="absolute w-[250px] h-[250px] border-4 border-white rounded-md pointer-events-none z-20">
+        {/* 🔲 Scanner Frame */}
+        <div className="absolute w-[300px] h-[300px] border-4 border-white rounded-md pointer-events-none z-20">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E64D20] to-[#F67B39] animate-scan-line" />
         </div>
       </div>
 
-      {/* Torch Toggle */}
+      {/* 🔦 Torch Toggle (limited support on iOS) */}
       {streamTrackRef.current?.getCapabilities?.().torch && (
         <button
           onClick={toggleTorch}
@@ -171,7 +170,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         </button>
       )}
 
-      {/* Close Button */}
+      {/* ❌ Close Button */}
       <button
         onClick={onClose}
         className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer z-30"
@@ -179,7 +178,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         Lukk
       </button>
 
-      {/* Scan Line Animation */}
+      {/* 🔁 Scan Line Animation */}
       <style>
         {`
           @keyframes scan-line {
