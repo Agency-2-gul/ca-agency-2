@@ -1,4 +1,4 @@
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../auth/authContext';
 import { useState } from 'react';
 import ProfileHeader from './ProfileHeader';
 import ProfileImage from './ProfileImage';

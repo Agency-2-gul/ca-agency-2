@@ -7,21 +7,20 @@ import {
   getTodaysLoggedFoods,
   extractCaloriesFromLoggedFood,
 } from '../../utils/foodLogs';
-import { getAuth } from 'firebase/auth';
+import { useAuth } from '../../auth/authContext';
 
 const CalorieTracker = () => {
-  // State for managing calorie goal and consumed calories
+  const { user, authReady } = useAuth(); // ✅ use user and authReady from context
+
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(2800);
   const [consumedCalories, setConsumedCalories] = useState(0);
   const [isGoalMenuOpen, setIsGoalMenuOpen] = useState(false);
 
-  // Effect to fetch logged foods from Firebase
   useEffect(() => {
+    if (!authReady || !user) return; // ✅ wait for Firebase to be ready
+
     const fetchLoggedFoods = async () => {
       try {
-        const user = getAuth().currentUser;
-        if (!user) return;
-
         const logs = await getTodaysLoggedFoods(user.uid);
 
         let total = 0;
@@ -39,9 +38,8 @@ const CalorieTracker = () => {
     };
 
     fetchLoggedFoods();
-  }, []);
+  }, [authReady, user]); // ✅ re-run if auth state changes
 
-  // Handler to update daily calorie goal
   const handleUpdateGoal = (newGoal) => {
     const parsedGoal = parseInt(newGoal, 10);
     if (!isNaN(parsedGoal) && parsedGoal > 0) {
@@ -66,6 +64,7 @@ const CalorieTracker = () => {
             consumedCalories={consumedCalories}
           />
         </div>
+
         {/* Right Side: Text Content */}
         <div
           className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-4 text-sm z-1"
