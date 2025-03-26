@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import LogModal from './LogModal';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
+import BarcodeIcon from '../../assets/Barcode_Icon.png';
 
 const FooterPopup = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
@@ -44,11 +45,7 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
               onClick={() => setScannerOpen(true)}
               className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow cursor-pointer"
             >
-              <img
-                src="src/assets/Barcode_Icon.png"
-                alt="Barcode icon"
-                className="mb-2"
-              />
+              <img src={BarcodeIcon} alt="Barcode icon" className="mb-2" />
               <span className="text-[#E64D20]">Strekkodeskanning</span>
             </button>
           </div>
