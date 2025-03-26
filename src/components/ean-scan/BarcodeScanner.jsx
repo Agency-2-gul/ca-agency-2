@@ -130,7 +130,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   };
 
   return (
-    <div className="relative p-4 flex flex-col justify-center items-center w-full">
+    <div className="relative p-4 flex flex-col justify-center items-center w-full z-50">
       <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex justify-center items-center min-h-[400px]">
         <video
           ref={videoRef}
