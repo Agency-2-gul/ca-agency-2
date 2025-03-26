@@ -7,7 +7,7 @@ import {
   getTodaysLoggedFoods,
   extractCaloriesFromLoggedFood,
 } from '../../utils/foodLogs';
-import { useAuth } from '../../auth/authContext';
+import { useAuth } from '../../context/authContext';
 
 const CalorieTracker = () => {
   const { user, authReady } = useAuth(); // ✅ use user and authReady from context
