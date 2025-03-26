@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { useNavigate } from 'react-router-dom';
+import { RiCameraSwitchLine } from 'react-icons/ri';
 
 const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const videoRef = useRef(null);
@@ -9,7 +10,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // back camera default
+  const [cameraFacingMode, setCameraFacingMode] = useState('user'); // Default to front camera
   const [instructionText, setInstructionText] = useState(
     'Hold strekkoden innenfor rammen'
   );
@@ -19,70 +20,55 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     codeReaderRef.current = codeReader;
     setLoading(true);
 
-    let stream;
     let timeout;
 
     timeout = setTimeout(() => {
       if (!hasScannedRef.current) {
-        setInstructionText('Prøv frontkamera hvis koden ikke går på bakkamera');
+        setInstructionText('Prøv bakkamera hvis koden ikke går på frontkamera');
       }
     }, 5000);
 
-    navigator.mediaDevices
-      .getUserMedia({
-        video: { facingMode: { ideal: cameraFacingMode } },
-      })
-      .then((mediaStream) => {
-        stream = mediaStream;
+    const startScanner = async () => {
+      try {
+        await stopCamera(); // ensure previous stream is cleaned up
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: cameraFacingMode } },
+        });
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
+
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current
+              .play()
+              .catch((err) => console.warn('Video play failed:', err));
+          };
         }
 
-        return codeReader.decodeFromVideoElement(
+        await codeReader.decodeFromVideoElement(
           videoRef.current,
           (result, err) => {
             if (result && !hasScannedRef.current) {
               hasScannedRef.current = true;
-
-              if (
-                codeReaderRef.current &&
-                typeof codeReaderRef.current.reset === 'function'
-              ) {
-                codeReaderRef.current.reset();
-              }
-
-              if (stream) {
-                stream.getTracks().forEach((track) => track.stop());
-              }
-
+              stopCamera();
               fetchProduct(result.getText());
             }
           }
         );
-      })
-      .then(() => {
+
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Camera error:', err);
         alert('Du må gi tilgang til kameraet: ' + err.message);
-      });
+      }
+    };
+
+    startScanner();
 
     return () => {
       clearTimeout(timeout);
-
-      if (
-        codeReaderRef.current &&
-        typeof codeReaderRef.current.reset === 'function'
-      ) {
-        codeReaderRef.current.reset();
-      }
-
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-      }
+      stopCamera();
     };
   }, [cameraFacingMode, navigate, onClose, onScanSuccess]);
 
@@ -100,16 +86,19 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
       const product = response.data?.products?.[0];
 
       if (product?.id) {
+        await stopCamera();
         onClose();
         onScanSuccess();
         navigate(`/product/${product.id}`, { state: { product } });
       } else {
         alert('Fant ingen produktdata');
+        await stopCamera();
         onClose();
       }
     } catch (err) {
       console.error('Fetch error:', err);
       alert('Kunne ikke hente produktdata');
+      await stopCamera();
       onClose();
     }
   };
@@ -120,6 +109,25 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     );
     setInstructionText('Hold strekkoden innenfor rammen');
     hasScannedRef.current = false;
+  };
+
+  const stopCamera = async () => {
+    try {
+      if (
+        codeReaderRef.current &&
+        typeof codeReaderRef.current.reset === 'function'
+      ) {
+        await codeReaderRef.current.reset();
+        codeReaderRef.current = null;
+      }
+
+      if (videoRef.current?.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    } catch (err) {
+      console.warn('stopCamera error:', err);
+    }
   };
 
   return (
@@ -150,21 +158,28 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
       {/* Buttons */}
       <div className="flex flex-col gap-2 mt-4 z-40">
+        {/* Toggle Camera Button (only on mobile) */}
         <button
           onClick={toggleCamera}
-          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80"
+          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80 flex items-center justify-center gap-2 block sm:hidden"
         >
-          Bytt kamera
+          <RiCameraSwitchLine />
+          {cameraFacingMode === 'user' ? 'Frontkamera' : 'Bakkamera'}
         </button>
 
+        {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={async () => {
+            await stopCamera();
+            onClose();
+          }}
           className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors"
         >
           Lukk
         </button>
       </div>
 
+      {/* Animation */}
       <style>
         {`
           @keyframes scan-line {
