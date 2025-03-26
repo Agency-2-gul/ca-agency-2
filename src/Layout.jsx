@@ -7,7 +7,6 @@ import Diary from './pages/Diary';
 const Layout = () => (
   <div className="flex flex-col min-h-screen">
     <FirebaseAuth />
-    <FirebaseAuth />
     <Header />
     <main className="flex-grow pt-2">
       <Outlet />
