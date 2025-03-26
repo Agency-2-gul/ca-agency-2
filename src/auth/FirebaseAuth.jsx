@@ -32,7 +32,9 @@ const FirebaseAuth = () => {
           autoPlay
           loop
           muted
-          className="absolute inset-0 w-full h-full object-cover"
+          playsInline
+          disablePictureInPicture
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
         >
           <source src={videoBg} type="video/mp4" />
           Din nettleser støtter ikke videoelementet.
