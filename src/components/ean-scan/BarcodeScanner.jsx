@@ -7,19 +7,13 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const hasScannedRef = useRef(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [torchOn, setTorchOn] = useState(false);
-  const streamTrackRef = useRef(null);
 
   useEffect(() => {
     let scanner;
 
     const startScanner = async () => {
       const scannerElement = document.getElementById('scanner');
-
-      if (!scannerElement) {
-        console.warn('Scanner container not found');
-        return;
-      }
+      if (!scannerElement) return;
 
       scannerElement.innerHTML = '';
       scannerElement.style.background = 'black';
@@ -37,9 +31,8 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           video: { facingMode: 'environment' },
         });
 
-        const [track] = stream.getVideoTracks();
-        streamTrackRef.current = track;
-        track.stop(); // let html5-qrcode handle it
+        // Stop initial stream – html5-qrcode takes over
+        stream.getTracks().forEach((track) => track.stop());
 
         scanner = new Html5Qrcode('scanner');
         html5QrCodeRef.current = scanner;
@@ -50,16 +43,11 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
             fps: 10,
             qrbox: { width: 300, height: 300 },
             disableFlip: true,
-            formatsToSupport: [Html5QrcodeSupportedFormats.ALL], // ← Temporarily support all formats
+            formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
           },
           async (decodedText) => {
             if (hasScannedRef.current) return;
             hasScannedRef.current = true;
-
-            // 🔊 Feedback
-            const beep = new Audio('/beep.mp3');
-            beep.play().catch(() => {});
-            if (navigator.vibrate) navigator.vibrate(200);
 
             try {
               await scanner.stop();
@@ -119,19 +107,6 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     };
   }, [navigate, onClose, onScanSuccess]);
 
-  const toggleTorch = async () => {
-    if (!streamTrackRef.current) return;
-
-    try {
-      await streamTrackRef.current.applyConstraints({
-        advanced: [{ torch: !torchOn }],
-      });
-      setTorchOn(!torchOn);
-    } catch (err) {
-      console.warn('Torch toggle error:', err);
-    }
-  };
-
   return (
     <div className="relative p-4 flex flex-col justify-center items-center w-full">
       {/* Camera Preview Container */}
@@ -149,36 +124,26 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           </div>
         )}
 
-        {/* 🧭 Instructions */}
+        {/* 🧭 Instruction Text */}
         <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none">
           Hold strekkoden innenfor rammen
         </div>
 
-        {/* 🔲 Scanner Frame */}
+        {/* 🔲 Animated Frame */}
         <div className="absolute w-[300px] h-[300px] border-4 border-white rounded-md pointer-events-none z-20">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E64D20] to-[#F67B39] animate-scan-line" />
         </div>
       </div>
 
-      {/* 🔦 Torch Toggle (limited support on iOS) */}
-      {streamTrackRef.current?.getCapabilities?.().torch && (
-        <button
-          onClick={toggleTorch}
-          className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm z-30"
-        >
-          {torchOn ? 'Slå av lys' : 'Slå på lys'}
-        </button>
-      )}
-
       {/* ❌ Close Button */}
       <button
         onClick={onClose}
-        className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer z-30"
+        className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
       >
         Lukk
       </button>
 
-      {/* 🔁 Scan Line Animation */}
+      {/* 🔁 Animation Style */}
       <style>
         {`
           @keyframes scan-line {
