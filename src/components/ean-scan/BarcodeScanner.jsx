@@ -7,29 +7,46 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   const codeReaderRef = useRef(null);
   const hasScannedRef = useRef(false);
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
+  const [cameraFacingMode, setCameraFacingMode] = useState('environment'); // default to back
+  const [instructionText, setInstructionText] = useState(
+    'Hold strekkoden innenfor rammen'
+  );
 
   useEffect(() => {
     const codeReader = new BrowserMultiFormatReader();
     codeReaderRef.current = codeReader;
+    setLoading(true);
 
-    // Ask for the back-facing camera
+    let stream;
+    let timeout;
+
+    // After 5 seconds, update instructions if not scanned
+    timeout = setTimeout(() => {
+      if (!hasScannedRef.current) {
+        setInstructionText('Prøv frontkamera hvis koden ikke går på bakkamera');
+      }
+    }, 5000);
+
     navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
-      .then((stream) => {
-        // Set stream to video element
+      .getUserMedia({
+        video: { facingMode: { ideal: cameraFacingMode } },
+      })
+      .then((mediaStream) => {
+        stream = mediaStream;
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.play();
         }
 
-        // Start decoding from the video element
-        codeReader
-          .decodeFromVideoElement(videoRef.current, (result, err) => {
+        return codeReader.decodeFromVideoElement(
+          videoRef.current,
+          (result, err) => {
             if (result && !hasScannedRef.current) {
               hasScannedRef.current = true;
 
-              // Stop decoding
               if (
                 codeReaderRef.current &&
                 typeof codeReaderRef.current.reset === 'function'
@@ -37,26 +54,26 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
                 codeReaderRef.current.reset();
               }
 
-              // Stop the video stream manually
-              stream.getTracks().forEach((track) => track.stop());
+              if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+              }
 
               fetchProduct(result.getText());
             }
-          })
-          .then(() => {
-            setLoading(false);
-          })
-          .catch((err) => {
-            console.error('Decode error:', err);
-            alert('Klarte ikke å starte skanneren');
-          });
+          }
+        );
+      })
+      .then(() => {
+        setLoading(false);
       })
       .catch((err) => {
-        console.error('Camera access error:', err);
+        console.error('Camera error:', err);
         alert('Du må gi tilgang til kameraet: ' + err.message);
       });
 
     return () => {
+      clearTimeout(timeout);
+
       if (
         codeReaderRef.current &&
         typeof codeReaderRef.current.reset === 'function'
@@ -68,9 +85,8 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [navigate, onClose, onScanSuccess]);
+  }, [cameraFacingMode, navigate, onClose, onScanSuccess]);
 
-  // Moved inside useEffect earlier if linting is strict
   const fetchProduct = async (decodedText) => {
     try {
       const res = await fetch(
@@ -99,6 +115,14 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     }
   };
 
+  const toggleCamera = () => {
+    setCameraFacingMode((prev) =>
+      prev === 'environment' ? 'user' : 'environment'
+    );
+    setInstructionText('Hold strekkoden innenfor rammen');
+    hasScannedRef.current = false;
+  };
+
   return (
     <div className="relative p-4 flex flex-col justify-center items-center w-full">
       <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex justify-center items-center min-h-[400px]">
@@ -116,8 +140,8 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           </div>
         )}
 
-        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none">
-          Hold strekkoden innenfor rammen
+        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none text-center px-2">
+          {instructionText}
         </div>
 
         <div className="absolute w-[250px] h-[250px] border-4 border-white rounded-md pointer-events-none z-20">
@@ -125,13 +149,23 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         </div>
       </div>
 
+      {/* Toggle Camera */}
+      <button
+        onClick={toggleCamera}
+        className="mt-4 px-4 py-2 border border-white text-white rounded-lg font-medium z-30"
+      >
+        Bytt kamera
+      </button>
+
+      {/* Close Button */}
       <button
         onClick={onClose}
-        className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
+        className="mt-2 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
       >
         Lukk
       </button>
 
+      {/* Scan Line Animation */}
       <style>
         {`
           @keyframes scan-line {
