@@ -13,50 +13,47 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
     const codeReader = new BrowserMultiFormatReader();
     codeReaderRef.current = codeReader;
 
+    // Ask for the back-facing camera
     navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        const videoInputDevices = devices.filter(
-          (device) => device.kind === 'videoinput'
-        );
-        const selectedDeviceId = videoInputDevices[0]?.deviceId;
-
-        if (!selectedDeviceId) {
-          alert('No video input devices found');
-          return;
+      .getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
+      .then((stream) => {
+        // Set stream to video element
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
         }
 
+        // Start decoding from the video element
         codeReader
-          .decodeFromVideoDevice(
-            selectedDeviceId,
-            videoRef.current,
-            (result, err) => {
-              if (result && !hasScannedRef.current) {
-                hasScannedRef.current = true;
+          .decodeFromVideoElement(videoRef.current, (result, err) => {
+            if (result && !hasScannedRef.current) {
+              hasScannedRef.current = true;
 
-                // ✅ Safely stop scanning
-                if (
-                  codeReaderRef.current &&
-                  typeof codeReaderRef.current.reset === 'function'
-                ) {
-                  codeReaderRef.current.reset();
-                }
-
-                fetchProduct(result.getText());
+              // Stop decoding
+              if (
+                codeReaderRef.current &&
+                typeof codeReaderRef.current.reset === 'function'
+              ) {
+                codeReaderRef.current.reset();
               }
+
+              // Stop the video stream manually
+              stream.getTracks().forEach((track) => track.stop());
+
+              fetchProduct(result.getText());
             }
-          )
+          })
           .then(() => {
             setLoading(false);
           })
           .catch((err) => {
-            console.error('Error starting the video stream:', err);
-            alert('Kameraen kunne ikke startes: ' + err);
+            console.error('Decode error:', err);
+            alert('Klarte ikke å starte skanneren');
           });
       })
       .catch((err) => {
-        console.error('Error listing video devices:', err);
-        alert('Klarte ikke å finne kameraer');
+        console.error('Camera access error:', err);
+        alert('Du må gi tilgang til kameraet: ' + err.message);
       });
 
     return () => {
@@ -66,9 +63,14 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
       ) {
         codeReaderRef.current.reset();
       }
+
+      if (videoRef.current?.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+      }
     };
   }, [navigate, onClose, onScanSuccess]);
 
+  // Moved inside useEffect earlier if linting is strict
   const fetchProduct = async (decodedText) => {
     try {
       const res = await fetch(
@@ -106,7 +108,6 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
           style={{ objectFit: 'cover' }}
           playsInline
           muted
-          autoPlay
         />
 
         {loading && (
