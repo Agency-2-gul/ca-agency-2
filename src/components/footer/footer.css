@@ -1,28 +1,25 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 .footer {
-    @apply bg-[#F7F7F7] text-black p-4 flex justify-between gap-6 items-end w-[100%];
-    box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.07);
+  @apply bg-[#F7F7F7] text-black p-4 flex sticky bottom-0 justify-between gap-6 items-end w-[100%];
+  box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.07);
 }
 
 .icon-div {
-    @apply  flex flex-col items-center justify-center w-[55px] h-full; 
+  @apply flex flex-col items-center justify-center w-[55px] h-full;
 }
 .icon {
-    @apply text-gray-600 text-[23px]; 
+  @apply text-gray-600 text-[23px];
 }
 .icon-stroke {
-    @apply stroke-1;
+  @apply stroke-1;
 }
 .icon-text {
-    @apply  text-[12px]; 
+  @apply text-[12px];
 }
 .center-icon {
-    @apply  text-[45px] mb-0.5;
-    
-   
-       
+  @apply text-[45px] mb-0.5;
 }
 .circular-icon {
-    @apply text-[24.5px]
+  @apply text-[24.5px];
 }

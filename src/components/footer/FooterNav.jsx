@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import FooterPopup from './FooterPopup';
 import { BiSolidPieChartAlt2 } from 'react-icons/bi';
 import { FaBook } from 'react-icons/fa';
 import { FaCirclePlus } from 'react-icons/fa6';
@@ -13,26 +13,7 @@ export default function FooterNav() {
   return (
     <>
       {/* Slide-panel*/}
-      <motion.div
-        className="fixed bottom-0 left-0 w-full h-[60vh] bg-white shadow-xl p-6 rounded-t-2xl transition-all z-0"
-        initial={{ y: '100%' }}
-        animate={{ y: isOpen ? 0 : '100%' }}
-        transition={{ type: 'spring', visualDuration: 0.1, bounce: 0 }}
-      >
-        <button
-          onClick={() => setIsOpen(false)}
-          className="absolute top-2 right-4 text-xl"
-        >
-          ❌
-        </button>
-        <h2 className="text-lg font-bold">Legg til din oppskrift:</h2>
-        <form action="submit">
-          <div>
-            <label htmlFor="title">Navn på din oppskrift</label>
-            <input id="title" type="text" />
-          </div>
-        </form>
-      </motion.div>
+      <FooterPopup isOpen={isOpen} setIsOpen={setIsOpen} />
       {/* Footer */}
       <div className="footer z-10">
         <Link className="icon-div" to="/">
@@ -55,7 +36,7 @@ export default function FooterNav() {
         </svg>
         <div className="icon-div" onClick={() => setIsOpen(!isOpen)}>
           <FaCirclePlus
-            className="center-icon"
+            className={`center-icon transition-transform duration-300 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
             style={{ fill: 'url(#gradientId)' }}
           />
         </div>
