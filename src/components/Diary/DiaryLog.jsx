@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
+import { FaMinus } from 'react-icons/fa';
 
 const DiaryLog = () => {
   const meals = [
@@ -30,7 +31,7 @@ const DiaryLog = () => {
               <p className="text-orange-500 font-medium">{meal.logged} kcal</p>
             </div>
             <button className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition">
-              <FaPlus size={18} />
+              {openIndex === index ? <FaMinus /> : <FaPlus />}
             </button>
           </div>
           {/* Toggle Visibility Based on openIndex */}
