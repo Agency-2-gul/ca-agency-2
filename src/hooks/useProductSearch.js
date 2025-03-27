@@ -9,7 +9,7 @@ const useProductSearch = () => {
 
   const { data, loading, error } = useFetch(
     searchQuery.length >= 2
-      ? `https://kassal.app/api/v1/products/?search=${searchQuery}`
+      ? `https://kassal.app/api/v1/products/?search=${searchQuery}&size=8`
       : null,
     options
   );
