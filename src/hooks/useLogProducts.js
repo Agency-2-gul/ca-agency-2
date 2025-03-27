@@ -26,7 +26,7 @@ const useLogProducts = () => {
     return () => unsubscribe();
   }, []);
 
-  const logProducts = async (selectedProducts, resetSelection, mealIndex) => {
+  const logProducts = async (selectedProducts, resetSelection, mealName) => {
     if (!user) {
       alert('Du må logge inn for å logge produkter');
       return;
@@ -52,14 +52,16 @@ const useLogProducts = () => {
 
       await addDoc(collection(db, 'foodLogs'), {
         userId: user.uid,
-        Index: mealIndex || null,
+        meal: mealName || null,
         products: cleanProducts,
         date: serverTimestamp(), // Renamed for consistency
       });
 
+      alert(`Produkter Logget i ${mealName}! `);
+
       refreshCalories(); // Re-fetch calorie data immediately after logging
 
-      alert(`Produkter Logget i ${mealIndex + 1}! `);
+
       resetSelection();
     } catch (err) {
       alert('Noe gikk galt, prøv igjen senere ' + err);

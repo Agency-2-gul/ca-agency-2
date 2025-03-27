@@ -3,9 +3,10 @@ import { useState } from 'react';
 import useLogProducts from '../../hooks/useLogProducts';
 import useProductSearch from '../../hooks/useProductSearch';
 import { FaPlus } from 'react-icons/fa';
+import { FaCheckCircle } from 'react-icons/fa';
 
 const LogProductsPage = () => {
-  const { mealIndex } = useParams(); // Get the meal index from the URL
+  const { mealName } = useParams(); // Get the meal index from the URL
   const navigate = useNavigate();
   const { logProducts } = useLogProducts();
   const { query, setQuery, varer, loading, error, handleKeyDown } =
@@ -14,7 +15,12 @@ const LogProductsPage = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   const handleAddProduct = (product) => {
-    setSelectedProducts((prev) => [...prev, product]);
+    setSelectedProducts((prev) => {
+      const isAlreadySelected = prev.some((p) => p.id === product.id);
+      return isAlreadySelected
+        ? prev.filter((p) => p.id !== product.id) // Remove if already selected
+        : [...prev, product]; // Add if not selected
+    });
   };
 
   const handleLog = () => {
@@ -27,16 +33,16 @@ const LogProductsPage = () => {
       selectedProducts,
       () => {
         setSelectedProducts([]);
-        navigate('/'); // Navigate back to DiaryLog after logging
+        navigate('/Diary'); // Navigate back to DiaryLog after logging
       },
-      mealIndex
+      mealName
     );
   };
 
   return (
     <div className="p-4">
       <h2 className="text-lg font-semibold">
-        Logg produkter for måltid {mealIndex}
+        Logg produkter for måltid {mealName}
       </h2>
 
       <input
@@ -54,11 +60,20 @@ const LogProductsPage = () => {
         {varer.map((product) => (
           <li
             key={product.id}
-            className="flex justify-between items-center p-2 border rounded-md cursor-pointer hover:bg-gray-100"
+            className="flex items-center p-2 border rounded-md cursor-pointer hover:bg-gray-100"
             onClick={() => handleAddProduct(product)}
           >
-            <span>{product.name}</span>
-            <FaPlus className="text-green-500" />
+            <img
+              className="h-12 w-8  object-cover rounded-md"
+              src={product.image}
+              alt={product.name}
+            />
+            <div className="flex justify-between w-full items-center">
+              <span>{product.name}</span>
+              {selectedProducts.some((p) => p.id === product.id) && (
+                <FaCheckCircle className="text-green-500" />
+              )}
+            </div>
           </li>
         ))}
       </ul>
