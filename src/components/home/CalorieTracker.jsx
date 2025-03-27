@@ -95,12 +95,12 @@ const CalorieTracker = () => {
 
         {/* Right Side: Text Content */}
         <div
-          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-2 text-sm z-1"
+          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-1 text-sm z-1"
           style={{ color: '#333333' }}
         >
           <button
             onClick={() => setIsGoalMenuOpen(!isGoalMenuOpen)}
-            className="text-xs text-blue-500 hover:underline m-0 ml-6 pb-1"
+            className="text-xs text-blue-500 hover:underline m-0 ml-6 pb-2"
           >
             Endre mål
           </button>
