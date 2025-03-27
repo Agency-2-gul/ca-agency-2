@@ -12,11 +12,12 @@ const DiaryLog = () => {
     { name: 'Snacks', recommended: '200', logged: 0 },
     { name: 'Kvelds', recommended: '200', logged: 0 },
   ];
+  const formatMealName = (name) => name.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <div className="space-y-4 p-4">
-      {meals.map((meal, index) => (
-        <div key={index} className="">
+      {meals.map((meal) => (
+        <div key={meal.name} className="">
           {/* Meal Header */}
           <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-md cursor-pointer">
             <div>
@@ -28,7 +29,9 @@ const DiaryLog = () => {
             </div>
             <button
               className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
-              onClick={() => navigate(`/log-products/${index}`)}
+              onClick={() =>
+                navigate(`/log-products/${formatMealName(meal.name)}`)
+              }
             >
               <FaPlus />
             </button>

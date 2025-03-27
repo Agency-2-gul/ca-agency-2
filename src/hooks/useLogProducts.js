@@ -18,7 +18,7 @@ const useLogProducts = () => {
     return () => unsubscribe();
   }, []);
 
-  const logProducts = async (selectedProducts, resetSelection, mealIndex) => {
+  const logProducts = async (selectedProducts, resetSelection, mealName) => {
     if (!user) {
       alert('Du må logge inn for å logge produkter');
       return;
@@ -43,11 +43,11 @@ const useLogProducts = () => {
 
       await addDoc(collection(db, 'foodLogs'), {
         userId: user.uid,
-        Index: mealIndex || null,
+        meal: mealName || null,
         products: cleanProducts,
         timestamp: serverTimestamp(),
       });
-      alert(`Produkter Logget i ${mealIndex + 1}! `);
+      alert(`Produkter Logget i ${mealName}! `);
       resetSelection();
     } catch (err) {
       alert('Noe gikk galt, prøv igjen senere ' + err);
