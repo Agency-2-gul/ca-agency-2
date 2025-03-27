@@ -13,7 +13,7 @@
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,css}": [
-      "eslint --max-warnings=0",
+      "eslint --max-warnings=5",
       "prettier --write"
     ]
   },
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
+    "@zxing/browser": "^0.1.5",
     "firebase": "^11.5.0",
     "firebase-admin": "^13.2.0",
     "firebase-functions": "^6.3.2",

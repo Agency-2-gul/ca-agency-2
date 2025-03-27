@@ -12,10 +12,10 @@ export default function FooterNav() {
 
   return (
     <>
-      {/* Slide-panel*/}
-      <FooterPopup isOpen={isOpen} setIsOpen={setIsOpen} />
+      {/* Slide-panel */}
+      {isOpen && <FooterPopup isOpen={isOpen} setIsOpen={setIsOpen} />}
       {/* Footer */}
-      <div className="footer z-10">
+      <div className="footer z-30">
         <Link className="icon-div" to="/">
           <BiSolidPieChartAlt2 className="icon circular-icon" />
           <span className="icon-text">Oversikt</span>

@@ -32,14 +32,16 @@ const FirebaseAuth = () => {
           autoPlay
           loop
           muted
-          className="absolute inset-0 w-full h-full object-cover"
+          playsInline
+          disablePictureInPicture
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
         >
           <source src={videoBg} type="video/mp4" />
           Din nettleser støtter ikke videoelementet.
         </video>
 
         <div className="absolute inset-0 bg-black/75"></div>
-        <div className="relative bg-white/85 bg-opacity-80 p-6 rounded-lg shadow-lg w-md">
+        <div className="relative bg-white/85 bg-opacity-80 p-6 rounded-lg shadow-lg w-sm md:w-md lg:w-lg">
           {isRegistering ? (
             <FirebaseRegister setIsRegistering={setIsRegistering} />
           ) : (
