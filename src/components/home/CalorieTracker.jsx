@@ -69,7 +69,7 @@ const CalorieTracker = () => {
 
       try {
         const db = getFirestore();
-        const userRef = doc(db, 'usersCalorieGoal', user.uid);
+        const userRef = doc(db, 'users', user.uid);
         await setDoc(userRef, { calorieGoal: parsedGoal }, { merge: true }); // save it
       } catch (err) {
         console.error('Error saving goal:', err);
