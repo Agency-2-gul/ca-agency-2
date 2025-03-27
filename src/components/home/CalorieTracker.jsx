@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import calorieTrackerImg from '../../assets/calorie-tracker.png';
 import CalorieProgress from './CalorieProgressCircle';
 import { FaFontAwesomeFlag, FaAppleAlt } from 'react-icons/fa';
@@ -9,14 +9,15 @@ import {
 } from '../../utils/foodLogs';
 import { useAuth } from '../../context/authContext';
 import useCalorieStore from '../../stores/calorieStore';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 
 const CalorieTracker = () => {
   const { user, authReady } = useAuth(); // use user and authReady from context
-
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(2800);
   const { consumedCalories, setConsumedCalories, triggerUpdate } =
     useCalorieStore();
   const [isGoalMenuOpen, setIsGoalMenuOpen] = useState(false);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!authReady || !user) return; // wait for Firebase to be ready
@@ -39,21 +40,46 @@ const CalorieTracker = () => {
       }
     };
 
+    const fetchGoal = async () => {
+      try {
+        const db = getFirestore();
+        const userRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.calorieGoal) {
+            setDailyCalorieGoal(data.calorieGoal);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch user goal:', err);
+      }
+    };
+
+    fetchGoal(); // fetch the goal from Firestore
     fetchLoggedFoods();
   }, [authReady, user, triggerUpdate]); // re-run if state changes
 
-  const handleUpdateGoal = (newGoal) => {
+  const handleUpdateGoal = async (newGoal) => {
     const parsedGoal = parseInt(newGoal, 10);
-    if (!isNaN(parsedGoal) && parsedGoal > 0) {
+    if (!isNaN(parsedGoal) && parsedGoal > 0 && user) {
       setDailyCalorieGoal(parsedGoal);
       setIsGoalMenuOpen(false);
-      // TODO: Save goal to user's profile in Firebase
+
+      try {
+        const db = getFirestore();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(userRef, { calorieGoal: parsedGoal }, { merge: true }); // save it
+      } catch (err) {
+        console.error('Error saving goal:', err);
+      }
     }
   };
 
   return (
     <div
-      className="relative h-[310px] bg-cover bg-center flex items-center justify-center z-[-10]"
+      className="relative h-[310px] bg-cover bg-center flex items-center justify-center"
       style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
       <div
@@ -69,9 +95,43 @@ const CalorieTracker = () => {
 
         {/* Right Side: Text Content */}
         <div
-          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-4 text-sm z-1"
+          className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-2 text-sm z-1"
           style={{ color: '#333333' }}
         >
+          <button
+            onClick={() => setIsGoalMenuOpen(!isGoalMenuOpen)}
+            className="text-xs text-blue-500 hover:underline m-0 ml-6 pb-1"
+          >
+            Endre mål
+          </button>
+          {/* 🔽 Dropdown */}
+          {isGoalMenuOpen && (
+            <div className="absolute top-[1.2rem] mt-1 bg-white border border-gray-300 rounded shadow-lg p-2 z-20">
+              <input
+                ref={inputRef}
+                type="number"
+                placeholder="F.eks. 2800"
+                className="w-28 px-2 py-1 text-sm border rounded mb-1"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleUpdateGoal(e.target.value);
+                }}
+              />
+              <div className="flex justify-between gap-2 text-xs">
+                <button
+                  onClick={() => handleUpdateGoal(inputRef.current.value)}
+                  className="text-green-600 hover:underline"
+                >
+                  Lagre
+                </button>
+                <button
+                  onClick={() => setIsGoalMenuOpen(false)}
+                  className="text-red-500 hover:underline"
+                >
+                  Avbryt
+                </button>
+              </div>
+            </div>
+          )}
           {/* Grunnmål */}
           <div className="flex flex-row items-center gap-2">
             <span className="text-gray-500">
