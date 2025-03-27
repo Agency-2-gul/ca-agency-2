@@ -25,7 +25,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
     timeout = setTimeout(() => {
       if (!hasScannedRef.current) {
-        setInstructionText('Prøv bakkamera hvis koden ikke går på frontkamera');
+        setInstructionText('Prøv frontkamera hvis koden ikke går på bakkamera');
       }
     }, 5000);
 
@@ -69,7 +69,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
 
     return () => {
       clearTimeout(timeout);
-      stopCamera(); // ✅ always stop when component unmounts
+      stopCamera();
     };
   }, [cameraFacingMode]);
 
@@ -130,7 +130,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
   };
 
   return (
-    <div className="relative p-4 flex flex-col justify-center items-center w-full z-50">
+    <div className="flex flex-col justify-center items-center w-full h-full z-40">
       <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex justify-center items-center min-h-[400px]">
         <video
           ref={videoRef}
@@ -169,7 +169,7 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
             await stopCamera();
             onClose();
           }}
-          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors cursor-pointer"
         >
           Lukk
         </button>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/authContext';
 import FirebaseLogin from './FirebaseLogin';
 import FirebaseRegister from './FirebaseRegister';
 import videoBg from '../assets/bakvid.mp4';
