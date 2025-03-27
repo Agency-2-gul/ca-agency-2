@@ -60,20 +60,29 @@ const LogProductsPage = () => {
         {varer.map((product) => (
           <li
             key={product.id}
-            className="flex items-center p-2 border rounded-md cursor-pointer hover:bg-gray-100"
+            className="flex items-center p-4 bg-white rounded-2xl shadow-md hover:bg-gray-50 transition"
             onClick={() => handleAddProduct(product)}
           >
+            {/* Product Image */}
             <img
-              className="h-12 w-8  object-cover rounded-md"
+              className="object-contain aspect-3/2 h-8 w-auto rounded-lg"
               src={product.image}
-              alt={product.name}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/src/assets/react.svg'; // Fallback image
+              }}
+              alt={`Bilde av ${product.name}`}
             />
-            <div className="flex justify-between w-full items-center">
-              <span>{product.name}</span>
-              {selectedProducts.some((p) => p.id === product.id) && (
-                <FaCheckCircle className="text-green-500" />
-              )}
+
+            {/* Product Details */}
+            <div className="flex flex-col flex-grow">
+              <span className="font-semibold text-lg">{product.name}</span>
             </div>
+
+            {/* Add Button */}
+            <button className=" text-orange-500 p-3 rounded-full">
+              <FaPlus />
+            </button>
           </li>
         ))}
       </ul>

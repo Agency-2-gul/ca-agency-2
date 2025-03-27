@@ -52,7 +52,7 @@ const useLogProducts = () => {
 
       await addDoc(collection(db, 'foodLogs'), {
         userId: user.uid,
-        meal: mealName || null,
+        meal: mealName,
         products: cleanProducts,
         date: serverTimestamp(), // Renamed for consistency
       });
@@ -60,7 +60,6 @@ const useLogProducts = () => {
       alert(`Produkter Logget i ${mealName}! `);
 
       refreshCalories(); // Re-fetch calorie data immediately after logging
-
 
       resetSelection();
     } catch (err) {
