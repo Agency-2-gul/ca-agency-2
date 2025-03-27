@@ -119,7 +119,7 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
 
   return (
     <>
-      <div className="bg-white p-6 rounded-2xl shadow-xl border space-y-4">
+      <div className="bg-white p-6 rounded-2xl space-y-4">
         <h2 className="text-lg font-semibold text-orange-600 text-center">
           Velg mengde ({normalizedUnit})
         </h2>

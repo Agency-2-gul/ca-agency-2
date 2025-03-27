@@ -84,13 +84,22 @@ const BarcodeScanner = ({ onClose, onScanSuccess }) => {
         }
       );
       const response = await res.json();
+
       const product = response.data?.products?.[0];
+      const nutrition = response.data?.nutrition;
 
       if (product?.id) {
+        const productWithNutrition = {
+          ...product,
+          nutrition: nutrition || [],
+        };
+
         await stopCamera();
         onClose();
         onScanSuccess();
-        navigate(`/product/${product.id}`, { state: { product } });
+        navigate(`/product/${product.id}`, {
+          state: { product: productWithNutrition },
+        });
       } else {
         alert('Fant ingen produktdata');
         await stopCamera();
