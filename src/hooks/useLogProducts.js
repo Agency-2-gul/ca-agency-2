@@ -6,6 +6,7 @@ import {
   addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
+import useCalorieStore from '../stores/calorieStore';
 
 // Extract weight in grams from product name
 const getWeightInGrams = (name) => {
@@ -15,6 +16,7 @@ const getWeightInGrams = (name) => {
 
 const useLogProducts = () => {
   const [user, setUser] = useState(null);
+  const { refreshCalories } = useCalorieStore();
 
   useEffect(() => {
     const auth = getAuth();
@@ -53,6 +55,8 @@ const useLogProducts = () => {
         products: cleanProducts,
         date: serverTimestamp(), // Renamed for consistency
       });
+
+      refreshCalories(); // Re-fetch calorie data immediately after logging
 
       alert('Produkter logget!');
       resetSelection();

@@ -8,16 +8,18 @@ import {
   extractCaloriesFromLoggedFood,
 } from '../../utils/foodLogs';
 import { useAuth } from '../../context/authContext';
+import useCalorieStore from '../../stores/calorieStore';
 
 const CalorieTracker = () => {
-  const { user, authReady } = useAuth(); // ✅ use user and authReady from context
+  const { user, authReady } = useAuth(); // use user and authReady from context
 
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(2800);
-  const [consumedCalories, setConsumedCalories] = useState(0);
+  const { consumedCalories, setConsumedCalories, triggerUpdate } =
+    useCalorieStore();
   const [isGoalMenuOpen, setIsGoalMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!authReady || !user) return; // ✅ wait for Firebase to be ready
+    if (!authReady || !user) return; // wait for Firebase to be ready
 
     const fetchLoggedFoods = async () => {
       try {
@@ -38,7 +40,7 @@ const CalorieTracker = () => {
     };
 
     fetchLoggedFoods();
-  }, [authReady, user]); // ✅ re-run if auth state changes
+  }, [authReady, user, triggerUpdate]); // re-run if state changes
 
   const handleUpdateGoal = (newGoal) => {
     const parsedGoal = parseInt(newGoal, 10);
