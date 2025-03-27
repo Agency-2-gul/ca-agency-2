@@ -6,9 +6,17 @@ import {
   addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
+import useCalorieStore from '../stores/calorieStore';
+
+// Extract weight in grams from product name
+const getWeightInGrams = (name) => {
+  const match = name.match(/(\d+)\s?g/i);
+  return match ? parseInt(match[1], 10) : 100;
+};
 
 const useLogProducts = () => {
   const [user, setUser] = useState(null);
+  const { refreshCalories } = useCalorieStore();
 
   useEffect(() => {
     const auth = getAuth();
@@ -33,6 +41,7 @@ const useLogProducts = () => {
       const cleanProducts = selectedProducts.map(({ name, id, nutrition }) => ({
         id: id || 'unknown id',
         name: name || 'unknown product',
+        weight: getWeightInGrams(name), //  Add weight
         nutrition: nutrition
           ? nutrition.map(({ display_name, amount, unit }) => ({
               name: display_name,
@@ -45,14 +54,18 @@ const useLogProducts = () => {
         userId: user.uid,
         Index: mealIndex || null,
         products: cleanProducts,
-        timestamp: serverTimestamp(),
+        date: serverTimestamp(), // Renamed for consistency
       });
+
+      refreshCalories(); // Re-fetch calorie data immediately after logging
+
       alert(`Produkter Logget i ${mealIndex + 1}! `);
       resetSelection();
     } catch (err) {
       alert('Noe gikk galt, prøv igjen senere ' + err);
     }
   };
+
   return { user, logProducts };
 };
 
