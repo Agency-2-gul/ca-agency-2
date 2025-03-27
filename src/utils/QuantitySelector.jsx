@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FaPlus, FaMinus } from 'react-icons/fa';
 import useLogProducts from '../hooks/useLogProducts';
 
 const extractWeightFromName = (name = '') => {
@@ -31,7 +33,6 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
 
   const safeWeight = rawWeight ?? 100;
   const safeUnit = rawUnit ?? 'g';
-
   const { normalizedWeight, normalizedUnit } = normalizeUnit(
     safeWeight,
     safeUnit
@@ -45,22 +46,19 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
   const [amount, setAmount] = useState(Math.min(maxAmount, minAmount));
   const [showMealModal, setShowMealModal] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState('');
-
   const { logProducts } = useLogProducts();
+  const navigate = useNavigate();
+
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     setAmount(Math.min(maxAmount, minAmount));
   }, [normalizedWeight]);
 
-  const handleLogClick = () => {
-    setShowMealModal(true);
-  };
+  const handleLogClick = () => setShowMealModal(true);
 
   const confirmMeal = () => {
-    if (!selectedMeal) {
-      alert('Velg et måltid');
-      return;
-    }
+    if (!selectedMeal) return;
 
     const loggedProduct = {
       id: product.id || 'unknown',
@@ -69,32 +67,55 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
       weight: amount,
     };
 
-    logProducts([loggedProduct], () => {}, selectedMeal);
+    logProducts(
+      [loggedProduct],
+      () => {
+        navigate('/diary');
+      },
+      selectedMeal
+    );
+
     setShowMealModal(false);
     setSelectedMeal('');
   };
 
   const mealOptions = ['Frokost', 'Lunsj', 'Middag', 'Snacks', 'Kvelds'];
 
-  const renderLiquidDropdown = () => {
-    const options = [];
-    for (let i = 100; i <= normalizedWeight; i += 100) {
-      options.push(
-        <option key={i} value={i}>
-          {i} ml
-        </option>
-      );
-    }
-    return (
-      <select
-        value={amount}
-        onChange={(e) => setAmount(Number(e.target.value))}
-        className="w-full p-3 rounded-xl border-2 border-orange-300 text-center text-lg"
-      >
-        {options}
-      </select>
-    );
+  const startContinuousChange = (type) => {
+    clearInterval(intervalRef.current);
+    const change = () => {
+      setAmount((prev) => {
+        const next =
+          type === 'inc'
+            ? Math.min(prev + stepAmount, maxAmount)
+            : Math.max(prev - stepAmount, minAmount);
+        return next;
+      });
+    };
+    change();
+    intervalRef.current = setInterval(change, 150);
   };
+
+  const stopContinuousChange = () => {
+    clearInterval(intervalRef.current);
+  };
+
+  const renderLiquidDropdown = () => (
+    <select
+      value={amount}
+      onChange={(e) => setAmount(Number(e.target.value))}
+      className="w-full p-3 rounded-xl border-2 border-orange-300 text-center text-lg"
+    >
+      {[...Array(Math.floor(normalizedWeight / 100)).keys()].map((i) => {
+        const val = (i + 1) * 100;
+        return (
+          <option key={val} value={val}>
+            {val} ml
+          </option>
+        );
+      })}
+    </select>
+  );
 
   return (
     <>
@@ -103,30 +124,63 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
           Velg mengde ({normalizedUnit})
         </h2>
 
+        {/* Quantity Selector */}
         {isLiquid ? (
           renderLiquidDropdown()
         ) : (
-          <input
-            type="number"
-            step={stepAmount}
-            min={minAmount}
-            max={maxAmount}
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            className="w-full p-3 rounded-xl border-2 border-orange-300 text-center text-lg"
-          />
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onMouseDown={() => startContinuousChange('dec')}
+              onMouseUp={stopContinuousChange}
+              onMouseLeave={stopContinuousChange}
+              onTouchStart={() => startContinuousChange('dec')}
+              onTouchEnd={stopContinuousChange}
+              className="p-3 rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200"
+            >
+              <FaMinus />
+            </button>
+
+            <input
+              type="number"
+              step={stepAmount}
+              min={minAmount}
+              max={maxAmount}
+              value={amount}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                if (!isNaN(val)) {
+                  setAmount(Math.min(Math.max(val, minAmount), maxAmount));
+                }
+              }}
+              className="w-[100px] text-center text-lg font-medium border-2 border-orange-300 rounded-xl px-3 py-2"
+            />
+
+            <button
+              onMouseDown={() => startContinuousChange('inc')}
+              onMouseUp={stopContinuousChange}
+              onMouseLeave={stopContinuousChange}
+              onTouchStart={() => startContinuousChange('inc')}
+              onTouchEnd={stopContinuousChange}
+              className="p-3 rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200"
+            >
+              <FaPlus />
+            </button>
+          </div>
         )}
 
-        <button
-          onClick={handleLogClick}
-          className="text-white w-full sm:w-[200px] mx-auto p-2 sm:p-3 rounded cursor-pointer bg-gradient-to-r from-[#E64D20] to-[#F67B39] relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed before:absolute before:inset-0 before:bg-[#E64D20] before:translate-x-[-100%] hover:before:translate-x-0 before:transition-transform before:duration-300 before:ease-in-out before:z-0"
-        >
-          <span className="relative z-10 font-semibold">
-            Logg {amount} {normalizedUnit}
-          </span>
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={handleLogClick}
+            className="text-white w-full max-w-[250px] p-2 sm:p-3 rounded cursor-pointer bg-gradient-to-r from-[#E64D20] to-[#F67B39] relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed before:absolute before:inset-0 before:bg-[#E64D20] before:translate-x-[-100%] hover:before:translate-x-0 before:transition-transform before:duration-300 before:ease-in-out before:z-0"
+          >
+            <span className="relative z-10 font-semibold">
+              Logg {amount} {normalizedUnit}
+            </span>
+          </button>
+        </div>
       </div>
 
+      {/* Modal for meal selection */}
       <AnimatePresence>
         {showMealModal && (
           <motion.div
