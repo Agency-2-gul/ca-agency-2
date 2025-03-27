@@ -5,6 +5,7 @@ import Recipes from './pages/Recipes';
 import Profile from './pages/Profile';
 import ProductPage from './components/product/ProductPage';
 import Diary from './pages/Diary';
+import LogProductsPage from './components/Diary/LogProductsPage';
 
 const App = () => (
   <Routes>
@@ -13,6 +14,7 @@ const App = () => (
       <Route path="diary" element={<Diary />} />
       <Route path="profile" element={<Profile />} />
       <Route path="product/:id" element={<ProductPage />} />
+      <Route path="/log-products/:mealIndex" element={<LogProductsPage />} />
     </Route>
   </Routes>
 );
