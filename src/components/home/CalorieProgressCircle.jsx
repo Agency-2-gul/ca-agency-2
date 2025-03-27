@@ -4,7 +4,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import '../../main.css';
 
 const CalorieProgress = ({ totalCalories, consumedCalories }) => {
-  const remainingCalories = totalCalories - consumedCalories;
+  const remainingCalories = Math.max(totalCalories - consumedCalories, 0);
   const percentage = (consumedCalories / totalCalories) * 100;
   const idCSS = 'orangeGradient';
 
