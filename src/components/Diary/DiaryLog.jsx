@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
+import { FaMinus } from 'react-icons/fa';
 
 const DiaryLog = () => {
+  const navigate = useNavigate();
+
   const meals = [
     { name: 'Frokost', recommended: '300-500', logged: 0 },
     { name: 'Lunsj', recommended: '750-1150', logged: 0 },
@@ -9,19 +12,13 @@ const DiaryLog = () => {
     { name: 'Snacks', recommended: '200', logged: 0 },
     { name: 'Kvelds', recommended: '200', logged: 0 },
   ];
-  const [openIndex, setOpenIndex] = useState(null);
-  const handleMenu = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
 
   return (
     <div className="space-y-4 p-4">
       {meals.map((meal, index) => (
         <div key={index} className="">
-          <div
-            className="flex justify-between items-center bg-white p-4 rounded-xl shadow-md cursor-pointer"
-            onClick={() => handleMenu(index)}
-          >
+          {/* Meal Header */}
+          <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-md cursor-pointer">
             <div>
               <p className="text-xs text-gray-500">
                 Anbefalt: {meal.recommended} kcal
@@ -29,19 +26,12 @@ const DiaryLog = () => {
               <h2 className="text-lg font-semibold">{meal.name}</h2>
               <p className="text-orange-500 font-medium">{meal.logged} kcal</p>
             </div>
-            <button className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition">
-              <FaPlus size={18} />
+            <button
+              className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
+              onClick={() => navigate(`/log-products/${index}`)}
+            >
+              <FaPlus />
             </button>
-          </div>
-          {/* Toggle Visibility Based on openIndex */}
-          <div
-            className={`overflow-hidden transition-all duration-300 ease-in-out ${
-              openIndex === index
-                ? 'max-h-screen opacity-100 p-4'
-                : 'max-h-0 opacity-0 p-0'
-            }`}
-          >
-            <p>This is a section for more information</p>
           </div>
         </div>
       ))}

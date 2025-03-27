@@ -1,148 +1,180 @@
 import { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { BrowserMultiFormatReader } from '@zxing/browser';
 import { useNavigate } from 'react-router-dom';
+import { RiCameraSwitchLine } from 'react-icons/ri';
 
 const BarcodeScanner = ({ onClose, onScanSuccess }) => {
-  const html5QrCodeRef = useRef(null);
+  const videoRef = useRef(null);
+  const codeReaderRef = useRef(null);
   const hasScannedRef = useRef(false);
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
+  const [cameraFacingMode, setCameraFacingMode] = useState('environment');
+  const [instructionText, setInstructionText] = useState(
+    'Hold strekkoden innenfor rammen'
+  );
+  const [buttonLabel, setButtonLabel] = useState('Frontkamera');
 
   useEffect(() => {
-    let scanner;
+    const codeReader = new BrowserMultiFormatReader();
+    codeReaderRef.current = codeReader;
+    setLoading(true);
+
+    let timeout;
+
+    timeout = setTimeout(() => {
+      if (!hasScannedRef.current) {
+        setInstructionText('Prøv frontkamera hvis koden ikke går på bakkamera');
+      }
+    }, 5000);
 
     const startScanner = async () => {
-      const scannerElement = document.getElementById('scanner');
-      if (!scannerElement) return;
-
-      scannerElement.innerHTML = '';
-      scannerElement.style.background = 'black';
-      scannerElement.style.minHeight = '256px';
-
       try {
-        const permissionStatus = await navigator.permissions.query({
-          name: 'camera',
-        });
-        if (permissionStatus.state === 'denied') {
-          alert('Du har blokkert kameraet.');
-          return;
-        }
+        await stopCamera();
 
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true, // ✅ more compatible with iOS
+          video: { facingMode: { ideal: cameraFacingMode } },
         });
 
-        stream.getTracks().forEach((track) => track.stop());
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
 
-        scanner = new Html5Qrcode('scanner');
-        html5QrCodeRef.current = scanner;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current
+              .play()
+              .catch((err) => console.warn('Video play failed:', err));
+          };
+        }
 
-        await scanner.start(
-          { facingMode: 'environment' },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
-          },
-          async (decodedText) => {
-            if (hasScannedRef.current) return;
-            hasScannedRef.current = true;
-
-            try {
-              await scanner.stop();
-              await scanner.clear();
-              html5QrCodeRef.current = null;
-
-              const res = await fetch(
-                `https://kassal.app/api/v1/products/ean/${decodedText}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${import.meta.env.VITE_KASSALAPP_TOKEN}`,
-                  },
-                }
-              );
-
-              const response = await res.json();
-              const product = response.data?.products?.[0];
-
-              if (product?.id) {
-                onClose();
-                onScanSuccess();
-                navigate(`/product/${product.id}`, { state: { product } });
-              } else {
-                alert('Fant ingen produktdata');
-                onClose();
-              }
-            } catch (err) {
-              console.error('Fetch error:', err);
-              alert('Kunne ikke hente produktdata');
-              onClose();
+        await codeReader.decodeFromVideoElement(
+          videoRef.current,
+          (result, err) => {
+            if (result && !hasScannedRef.current) {
+              hasScannedRef.current = true;
+              stopCamera();
+              fetchProduct(result.getText());
             }
-          },
-          (err) => console.warn('Scan error:', err)
+          }
         );
 
         setLoading(false);
       } catch (err) {
-        console.error('Camera access error:', err);
-        alert('Du må gi tilgang til kameraet.');
+        console.error('Camera error:', err);
+        alert('Du må gi tilgang til kameraet: ' + err.message);
       }
     };
 
-    const timeout = setTimeout(() => {
-      requestAnimationFrame(startScanner);
-    }, 300);
+    startScanner();
 
     return () => {
       clearTimeout(timeout);
-      setLoading(true);
-      if (html5QrCodeRef.current) {
-        html5QrCodeRef.current
-          .stop()
-          .then(() => html5QrCodeRef.current.clear())
-          .catch((err) => console.warn('Stop scanner error:', err));
-      }
-      html5QrCodeRef.current = null;
+      stopCamera();
     };
-  }, [navigate, onClose, onScanSuccess]);
+  }, [cameraFacingMode]);
+
+  const fetchProduct = async (decodedText) => {
+    try {
+      const res = await fetch(
+        `https://kassal.app/api/v1/products/ean/${decodedText}`,
+        {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_KASSALAPP_TOKEN}`,
+          },
+        }
+      );
+      const response = await res.json();
+      const product = response.data?.products?.[0];
+
+      if (product?.id) {
+        await stopCamera();
+        onClose();
+        onScanSuccess();
+        navigate(`/product/${product.id}`, { state: { product } });
+      } else {
+        alert('Fant ingen produktdata');
+        await stopCamera();
+        onClose();
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+      alert('Kunne ikke hente produktdata');
+      await stopCamera();
+      onClose();
+    }
+  };
+
+  const toggleCamera = () => {
+    const nextMode =
+      cameraFacingMode === 'environment' ? 'user' : 'environment';
+    setCameraFacingMode(nextMode);
+    setButtonLabel(nextMode === 'environment' ? 'Frontkamera' : 'Bakkamera');
+    setInstructionText('Hold strekkoden innenfor rammen');
+    hasScannedRef.current = false;
+  };
+
+  const stopCamera = async () => {
+    try {
+      if (codeReaderRef.current?.reset) {
+        await codeReaderRef.current.reset();
+        codeReaderRef.current = null;
+      }
+
+      if (videoRef.current?.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    } catch (err) {
+      console.warn('stopCamera error:', err);
+    }
+  };
 
   return (
-    <div className="p-4 flex flex-col items-center justify-center">
-      {/* Camera View */}
+    <div className="flex flex-col justify-center items-center w-full h-full z-40">
       <div className="relative w-full max-w-md bg-black rounded overflow-hidden flex justify-center items-center min-h-[400px]">
-        <div
-          id="scanner"
+        <video
+          ref={videoRef}
           className="w-full h-full"
-          style={{ position: 'relative' }}
+          style={{ objectFit: 'cover' }}
+          playsInline
+          muted
         />
 
-        {/* Loading Spinner */}
         {loading && (
           <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-30">
             <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-white" />
           </div>
         )}
 
-        {/* Instruction */}
-        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none">
-          Hold strekkoden innenfor rammen
+        <div className="absolute top-2 text-white font-medium text-sm z-30 pointer-events-none text-center px-2">
+          {instructionText}
         </div>
 
-        {/* Scanner Frame */}
         <div className="absolute w-[250px] h-[250px] border-4 border-white rounded-md pointer-events-none z-20">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E64D20] to-[#F67B39] animate-scan-line" />
         </div>
       </div>
 
-      {/* Close Button */}
-      <button
-        onClick={onClose}
-        className="mt-4 px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors z-30"
-      >
-        Lukk
-      </button>
+      <div className="flex flex-col gap-2 mt-4 z-40">
+        <button
+          onClick={toggleCamera}
+          className="px-4 py-2 border border-white text-white rounded-lg font-medium bg-black/60 hover:bg-black/80 flex items-center justify-center gap-2 block md:hidden"
+        >
+          <RiCameraSwitchLine />
+          {buttonLabel}
+        </button>
 
-      {/* Scan Line Animation */}
+        <button
+          onClick={async () => {
+            await stopCamera();
+            onClose();
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-[#E64D20] to-[#F67B39] text-white rounded-lg font-medium hover:from-[#d13f18] hover:to-[#e56425] transition-colors cursor-pointer"
+        >
+          Lukk
+        </button>
+      </div>
+
       <style>
         {`
           @keyframes scan-line {
