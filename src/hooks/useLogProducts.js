@@ -38,17 +38,19 @@ const useLogProducts = () => {
     try {
       const db = getFirestore();
 
-      const cleanProducts = selectedProducts.map(({ name, id, nutrition }) => ({
-        id: id || 'unknown id',
-        name: name || 'unknown product',
-        weight: getWeightInGrams(name), //  Add weight
-        nutrition: nutrition
-          ? nutrition.map(({ display_name, amount, unit }) => ({
-              name: display_name,
-              value: `${amount} ${unit}`,
-            }))
-          : [],
-      }));
+      const cleanProducts = selectedProducts.map(
+        ({ name, id, nutrition, weight }) => ({
+          id: id || 'unknown id',
+          name: name || 'unknown product',
+          weight: weight || getWeightInGrams(name), // ✅ use real weight if passed
+          nutrition: nutrition
+            ? nutrition.map(({ display_name, amount, unit }) => ({
+                name: display_name,
+                value: `${amount} ${unit}`,
+              }))
+            : [],
+        })
+      );
 
       await addDoc(collection(db, 'foodLogs'), {
         userId: user.uid,

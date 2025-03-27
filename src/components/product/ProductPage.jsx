@@ -1,30 +1,44 @@
 import { useLocation } from 'react-router-dom';
+import QuantitySelector from '../../utils/QuantitySelector';
 
 const ProductPage = () => {
   const location = useLocation();
   const product = location.state?.product;
 
   if (!product) {
-    return <p>Fant ikke produktinfo.</p>;
+    return (
+      <div className="p-6 max-w-md mx-auto text-center">
+        <p className="text-gray-500 text-lg">Fant ikke produktinfo.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">{product.name}</h1>
-      <p className="text-gray-600 mb-2">{product.brand}</p>
+    <div className="p-4 max-w-md mx-auto space-y-5">
+      {/* Title */}
+      <div className="text-center">
+        <h1 className="text-2xl font-semibold mb-1">{product.name}</h1>
+        {product.brand && (
+          <p className="text-sm text-gray-500">{product.brand}</p>
+        )}
+      </div>
 
       {/* Product Image */}
-      {product.image ? (
+      {product.image && (
         <img
           src={product.image}
           alt={product.name}
-          className="w-full max-w-sm rounded-lg shadow-md mb-4"
+          className="max-h-[180px] object-contain mx-auto rounded-xl shadow-sm"
         />
-      ) : (
-        <p className="text-sm text-gray-500 mb-4">Ingen bilde tilgjengelig</p>
       )}
 
-      <p className="text-sm">{product.description || 'Ingen beskrivelse'}</p>
+      {/* Quantity Selector */}
+      <QuantitySelector
+        totalAmount={product.weight}
+        unit={product.weight_unit}
+        productName={product.name}
+        product={product}
+      />
     </div>
   );
 };
