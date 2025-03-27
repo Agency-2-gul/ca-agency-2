@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FooterPopup from './FooterPopup';
 import { BiSolidPieChartAlt2 } from 'react-icons/bi';
 import { FaBook } from 'react-icons/fa';
@@ -9,6 +9,20 @@ import { CgProfile } from 'react-icons/cg';
 
 export default function FooterNav() {
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const body = document.querySelector('body');
+
+    if (isOpen) {
+      body.classList.add('overflow-hidden');
+    } else {
+      body.classList.remove('overflow-hidden');
+    }
+
+    // Clean up if component unmounts while open
+    return () => {
+      body.classList.remove('overflow-hidden');
+    };
+  }, [isOpen]);
 
   return (
     <>
