@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import QuantitySelector from '../../utils/QuantitySelector';
+import QuantitySelector from '../ean-logging/QuantitySelector';
 import NutritionCard from './NutritionCard';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
@@ -9,6 +9,7 @@ const ProductPage = () => {
   const product = location.state?.product;
   const [showNutrition, setShowNutrition] = useState(false);
 
+  console.log(product);
   if (!product) {
     return (
       <div className="p-6 max-w-md mx-auto text-center">
@@ -49,7 +50,7 @@ const ProductPage = () => {
         <div className="flex justify-center">
           <button
             onClick={() => setShowNutrition((prev) => !prev)}
-            className="text-sm text-orange-600 font-medium flex items-center gap-1 hover:underline mt-2"
+            className="text-sm text-orange-600 font-medium flex items-center gap-1 hover:underline mt-2 cursor-pointer"
           >
             {showNutrition ? 'Skjul næringsinnhold' : 'Vis næringsinnhold'}
             {showNutrition ? <FaChevronUp /> : <FaChevronDown />}
