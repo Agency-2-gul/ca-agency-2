@@ -16,7 +16,7 @@ const NutritionCard = ({ nutrition }) => {
   if (!nutrition || nutrition.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 space-y-2 border">
+    <div className="bg-white rounded-2xl shadow-md p-4 space-y-2">
       <h3 className="text-lg font-semibold text-center text-gray-700">
         Næringsinnhold
       </h3>
