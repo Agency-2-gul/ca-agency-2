@@ -7,21 +7,20 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-const WeightLogger = () => {
+const WeightLogger = ({ defaultOpen = false }) => {
   const [weight, setWeight] = useState('');
   const [unit, setUnit] = useState('kg');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-  const [isOpen, setIsOpen] = useState(false); // foldable state
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -73,16 +72,13 @@ const WeightLogger = () => {
 
   return (
     <div className="w-full">
-      {/* Fold/Expand Toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 transition cursor-pointer"
       >
         <span className="font-medium text-gray-700">Logg vekt</span>
         <svg
-          className={`h-5 w-5 transform transition-transform duration-200 ${
-            isOpen ? 'rotate-90' : ''
-          }`}
+          className={`h-5 w-5 transform transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
@@ -92,14 +88,12 @@ const WeightLogger = () => {
         </svg>
       </button>
 
-      {/* Collapsible Content */}
       {isOpen && (
         <div className="mt-3">
           <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
             <span className="text-gray-700 font-medium min-w-20">Vekt</span>
             <div className="flex-1">
               <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm p-1">
-                {/* Minus */}
                 <button
                   onClick={() => {
                     const currentValue = parseFloat(weight) || 0;
@@ -126,7 +120,6 @@ const WeightLogger = () => {
                   </svg>
                 </button>
 
-                {/* Input */}
                 <div className="relative flex-1 mx-2">
                   <input
                     type="text"
@@ -138,7 +131,6 @@ const WeightLogger = () => {
                   />
                 </div>
 
-                {/* Plus */}
                 <button
                   onClick={() => {
                     const currentValue = parseFloat(weight) || 0;
@@ -163,7 +155,6 @@ const WeightLogger = () => {
                 </button>
               </div>
 
-              {/* Toggle + Log */}
               <div className="flex items-center mt-2 justify-between">
                 <div
                   onClick={() => {
