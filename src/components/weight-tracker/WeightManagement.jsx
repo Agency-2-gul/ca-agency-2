@@ -11,6 +11,8 @@ import {
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { FaTrash, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import useMacroStore from '../../stores/macroStore';
+import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
 
 const WeightManagement = () => {
   const [weightEntries, setWeightEntries] = useState([]);
@@ -91,10 +93,14 @@ const WeightManagement = () => {
       // Delete the document
       await deleteDoc(entryRef);
 
+      await setDefaultMacroGoals(); // Update macro goals after deleting weight entry
+
       // Remove the entry from local state
       setWeightEntries((prevEntries) =>
         prevEntries.filter((entry) => entry.id !== entryId)
       );
+
+      useMacroStore.getState().refreshMacros(); // Refresh macros after deleting logged weight
     } catch (err) {
       console.error('Error deleting weight entry:', err);
       setError('Kunne ikke slette vektoppføring');

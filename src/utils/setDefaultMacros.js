@@ -13,6 +13,7 @@ import {
 import { calculateRecommendedMacros } from './getRecommendedMacros';
 import { auth } from '../../firebase';
 
+// This function updates macro goals based on the latest calorie goal and weight
 export async function setDefaultMacroGoals() {
   const user = auth.currentUser;
   if (!user) return;
@@ -20,15 +21,16 @@ export async function setDefaultMacroGoals() {
   const db = getFirestore();
   const userRef = doc(db, 'users', user.uid);
 
-  // 1. Get calorie goal from user document
+  // Step 1: Get user's calorie goal
   const userSnap = await getDoc(userRef);
   const calorieGoal = userSnap.exists() ? userSnap.data().calorieGoal : null;
+
   if (!calorieGoal) {
     console.warn('No calorie goal found for user');
     return;
   }
 
-  // 2. Get latest weight from weightLogs, ordered by timestamp
+  // Step 2: Get user's latest weight
   const weightQuery = query(
     collection(db, 'weightLogs'),
     where('userId', '==', user.uid),
@@ -43,11 +45,11 @@ export async function setDefaultMacroGoals() {
     return;
   }
 
-  // 3. Calculate macros using helper
+  // Step 3: Calculate macros based on calorie goal and weight
   const recommended = calculateRecommendedMacros(calorieGoal, latestWeight);
 
-  // 4. Save macros to user document
+  // Step 4: Save macro goals back to user document
   await setDoc(userRef, recommended, { merge: true });
 
-  console.log('Macro goals saved:', recommended);
+  console.log('Macro goals saved to Firestore:', recommended);
 }

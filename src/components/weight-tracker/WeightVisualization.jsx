@@ -21,6 +21,7 @@ import {
 } from 'recharts';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import useWeightStore from '../../stores/weightStore';
 
 const WeightVisualization = ({ isWidget = false }) => {
   const [weightData, setWeightData] = useState([]);
@@ -29,6 +30,7 @@ const WeightVisualization = ({ isWidget = false }) => {
   const [expanded, setExpanded] = useState(false);
   const [timeRange, setTimeRange] = useState(isWidget ? '30d' : '90d');
   const [user, setUser] = useState(null);
+  const { trigger } = useWeightStore();
 
   useEffect(() => {
     const auth = getAuth();
@@ -121,7 +123,7 @@ const WeightVisualization = ({ isWidget = false }) => {
     };
 
     fetchWeightData();
-  }, [timeRange, isWidget, user]); // Added user dependency
+  }, [timeRange, isWidget, user, trigger]); // Added user dependency
 
   const handleTimeRangeChange = (range) => {
     setTimeRange(range);
