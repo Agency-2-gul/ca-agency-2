@@ -66,7 +66,7 @@ export function extractMacrosFromLoggedFood(foodLog) {
 
       if (isNaN(rawValue)) return;
 
-      const scaled = (rawValue / 100) * weight;
+      const scaled = Math.max(0, (rawValue / 100) * weight); // ⬅️ Clamp to 0
 
       if (name.includes('karbohydrater')) totals.carbs += scaled;
       if (name.includes('protein')) totals.protein += scaled;
@@ -76,9 +76,9 @@ export function extractMacrosFromLoggedFood(foodLog) {
   });
 
   return {
-    carbs: Math.round(totals.carbs),
-    protein: Math.round(totals.protein),
-    fat: Math.round(totals.fat),
+    carbs: Math.round(Math.max(0, totals.carbs)),
+    protein: Math.round(Math.max(0, totals.protein)),
+    fat: Math.round(Math.max(0, totals.fat)),
   };
 }
 

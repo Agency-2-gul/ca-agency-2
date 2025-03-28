@@ -6,10 +6,10 @@ export function calculateRecommendedMacros(calorieGoal, weightKg) {
   const fatCalories = calorieGoal * 0.25;
   const fat = fatCalories / 9;
 
-  // 3. Carbs: remaining calories / 4 kcal/g
+  // 3. Carbs: remaining calories / 4 kcal/g (clamped to avoid negatives)
   const proteinCalories = protein * 4;
   const carbsCalories = calorieGoal - fatCalories - proteinCalories;
-  const carbs = carbsCalories / 4;
+  const carbs = Math.max(0, carbsCalories / 4);
 
   return {
     proteinGoal: Math.round(protein),
