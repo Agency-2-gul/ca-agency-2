@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { getTodaysLoggedFoods } from '../../utils/foodLogs';
-import { getAuth } from 'firebase/auth';
+import { useAuth } from '../../context/AuthContext';
 
 const DiaryLog = () => {
   const navigate = useNavigate();
   const [loggedMeals, setLoggedMeals] = useState({});
   const [expandedMeal, setExpandedMeal] = useState(null); // Track which meal is expanded
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const { user, authReady } = useAuth();
 
   const meals = [
     { name: 'Frokost', recommended: '300-500', logged: 0 },
@@ -22,34 +21,36 @@ const DiaryLog = () => {
   const formatMealName = (name) => name.toLowerCase().replace(/\s+/g, '-');
 
   useEffect(() => {
-    if (user) {
-      getTodaysLoggedFoods(user.uid).then((foodLogs) => {
-        const groupedLogs = foodLogs.reduce((acc, log) => {
-          if (!acc[log.meal]) acc[log.meal] = { totalKcal: 0, products: [] };
+    if (!authReady || !user) return;
 
-          log.products.forEach((product) => {
-            const kcalEntry = product.nutrition.find(
-              (n) =>
-                n.name.toLowerCase() === 'kalorier' ||
-                n.name.toLowerCase() === 'kcal'
-            );
+    getTodaysLoggedFoods(user.uid).then((foodLogs) => {
+      const groupedLogs = foodLogs.reduce((acc, log) => {
+        if (!acc[log.meal]) acc[log.meal] = { totalKcal: 0, products: [] };
 
-            // Extract numeric kcal value
-            const kcalValue = kcalEntry?.value
-              ? parseFloat(kcalEntry.value.replace(/[^\d.]/g, '')) // Remove non-numeric characters
-              : 0;
+        log.products.forEach((product) => {
+          const kcalEntry = product.nutrition.find(
+            (n) =>
+              n.name.toLowerCase() === 'kalorier' ||
+              n.name.toLowerCase() === 'kcal'
+          );
 
-            acc[log.meal].totalKcal += kcalValue;
-            acc[log.meal].products.push(product);
-          });
+          const kcalValue = kcalEntry?.value
+            ? parseFloat(kcalEntry.value.replace(/[^\d.]/g, ''))
+            : 0;
 
-          return acc;
-        }, {});
+          const weight = product.weight || 100;
+          const totalCalories = (kcalValue / 100) * weight;
 
-        setLoggedMeals(groupedLogs);
-      });
-    }
-  }, [user]);
+          acc[log.meal].totalKcal += Math.round(totalCalories);
+          acc[log.meal].products.push(product);
+        });
+
+        return acc;
+      }, {});
+
+      setLoggedMeals(groupedLogs);
+    });
+  }, [authReady, user]);
 
   const toggleMeal = (mealKey) => {
     setExpandedMeal((prev) => (prev === mealKey ? null : mealKey));
