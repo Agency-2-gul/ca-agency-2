@@ -6,6 +6,9 @@ import {
   addDoc,
   serverTimestamp,
 } from 'firebase/firestore';
+import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
+import useMacroStore from '../../stores/macroStore';
+import useWeightStore from '../../stores/weightStore';
 
 const WeightLogger = ({ defaultOpen = false }) => {
   const [weight, setWeight] = useState('');
@@ -58,10 +61,11 @@ const WeightLogger = ({ defaultOpen = false }) => {
         unit: 'kg',
       });
 
+      await setDefaultMacroGoals(); // calculate and store updated macro goals
+
       setSuccess(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      useMacroStore.getState().refreshMacros(); // refresh macros after logging weight
+      useWeightStore.getState().refreshWeights(); // refresh weights after logging
     } catch (err) {
       console.error('Error logging weight:', err);
       setError('Feil ved lagring. Sjekk tillatelser.');

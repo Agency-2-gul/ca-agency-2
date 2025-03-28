@@ -10,6 +10,9 @@ import {
 import { useAuth } from '../../context/authContext';
 import useCalorieStore from '../../stores/calorieStore';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import MacroTracker from './MacroTracker';
+import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
+import useMacroStore from '../../stores/macroStore';
 
 const CalorieTracker = () => {
   const { user, authReady } = useAuth(); // use user and authReady from context
@@ -71,6 +74,9 @@ const CalorieTracker = () => {
         const db = getFirestore();
         const userRef = doc(db, 'users', user.uid);
         await setDoc(userRef, { calorieGoal: parsedGoal }, { merge: true }); // save it
+
+        await setDefaultMacroGoals(); // set default macros based on daily calorie goal
+        useMacroStore.getState().refreshMacros(); // refresh macros in the store
       } catch (err) {
         console.error('Error saving goal:', err);
       }
@@ -79,11 +85,11 @@ const CalorieTracker = () => {
 
   return (
     <div
-      className="relative h-[310px] bg-cover bg-center flex items-center justify-center"
+      className="relative h-[310px] bg-cover bg-center flex items-center justify-center mb-14"
       style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
       <div
-        className="h-[200px] w-full mx-4 flex items-center justify-start rounded-xl shadow-md -mt-6"
+        className="h-[200px] w-full mx-4 flex items-center justify-start rounded-xl shadow-md -mt-8"
         style={{ backgroundColor: '#F7F7F7' }}
       >
         <div>
@@ -165,6 +171,9 @@ const CalorieTracker = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="absolute left-0 right-0 bottom-[-35px] z-10">
+        <MacroTracker />
       </div>
     </div>
   );
