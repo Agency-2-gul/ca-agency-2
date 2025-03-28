@@ -25,12 +25,11 @@ export default function FooterNav() {
 
   return (
     <>
-      {/* Slide-panel */}
       {isOpen && <FooterPopup isOpen={isOpen} setIsOpen={setIsOpen} />}
 
       {/* Mobile/Tablet Footer (Sticky, hidden on desktop) */}
       <div className="block md:hidden">
-        <div className="fixed bottom-0 left-0 w-full bg-white border-t z-30">
+        <div className="fixed bottom-0 left-0 w-full bg-white z-30">
           <div className="footer">
             <Link className="icon-div" to="/">
               <BiSolidPieChartAlt2 className="icon circular-icon" />
@@ -77,7 +76,7 @@ export default function FooterNav() {
         </div>
       </div>
 
-      {/* Desktop Footer (hidden on mobile/tablet) */}
+      {/* Desktop Footer */}
       <div className="hidden md:flex justify-center items-center py-4 text-sm text-gray-500 border-t">
         <p className="text-center">
           &copy; {new Date().getFullYear()} Matboksen – Agency-gruppe-gul
