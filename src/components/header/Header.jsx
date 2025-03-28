@@ -16,7 +16,9 @@ const Header = () => {
       <div className="max-w-[1400px] mx-auto px-4 py-3 flex justify-between items-center">
         {/* Mobile/Tablet View */}
         <div className="md:hidden w-full flex justify-center">
-          <img src={logo} alt="Logo" className="h-10" />
+          <Link to="/">
+            <img src={logo} alt="Logo" className="h-10" />
+          </Link>
         </div>
 
         {/* Desktop View */}

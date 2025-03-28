@@ -290,21 +290,16 @@ const WeightVisualization = ({ isWidget = false }) => {
 
   const renderFullView = () => {
     return (
-      <div
-        className="relative bg-white rounded-lg shadow"
-        onClick={() => !expanded && setExpanded(true)}
-      >
+      <div className="relative bg-white rounded-lg shadow">
         <div
           className={`p-4 transition-all duration-300 ${expanded ? 'pb-20' : ''}`}
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Vektlogg</h2>
+
             <div
               className="flex items-center text-gray-500 hover:text-[#E64D20] transition cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                setExpanded(!expanded);
-              }}
+              onClick={() => setExpanded(!expanded)}
             >
               <span>{getTimeRangeLabel()}</span>
               {expanded ? (
