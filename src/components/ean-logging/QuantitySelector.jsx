@@ -25,13 +25,11 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
     safeUnit
   );
 
-  // Determine product properties
   const isLiquid = normalizedUnit === 'ml';
   const minAmount = isLiquid ? 100 : 0;
   const stepAmount = isLiquid ? 100 : 1;
   const maxAmount = normalizedWeight;
 
-  // State
   const [amount, setAmount] = useState(Math.min(maxAmount, minAmount));
   const [showMealModal, setShowMealModal] = useState(false);
 
@@ -42,10 +40,12 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
   const handleLogClick = () => setShowMealModal(true);
 
   const handleMealConfirm = (selectedMeal) => {
+    // This is the important part - pass the original nutrition data unchanged
+    // Let the useLogProducts hook handle the scaling
     const loggedProduct = {
       id: product.id || 'unknown',
       name: product.name || 'Ukjent produkt',
-      nutrition: product.nutrition || [],
+      nutrition: product.nutrition || [], // Pass the original nutrition array
       weight: amount,
       unit: normalizedUnit,
       fullWeight: normalizedWeight,

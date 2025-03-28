@@ -8,12 +8,10 @@ import {
 } from 'firebase/firestore';
 import useCalorieStore from '../stores/calorieStore';
 import useMacroStore from '../stores/macroStore';
-
-// Extract weight in grams from product name
-const getWeightInGrams = (name) => {
-  const match = name.match(/(\d+)\s?g/i);
-  return match ? parseInt(match[1], 10) : 100;
-};
+import {
+  extractWeightFromName,
+  normalizeUnit,
+} from '../components/ean-logging/weight';
 
 const useLogProducts = () => {
   const [user, setUser] = useState(null);
@@ -33,41 +31,81 @@ const useLogProducts = () => {
       alert('Du må logge inn for å logge produkter');
       return;
     }
+
     if (!selectedProducts || selectedProducts.length === 0) {
       alert('Du må velge produkter for å logge dem');
       return;
     }
+
     try {
       const db = getFirestore();
 
-      const cleanProducts = selectedProducts.map(
-        ({ name, id, nutrition, weight }) => ({
-          id: id || 'unknown id',
-          name: name || 'unknown product',
-          weight: weight || getWeightInGrams(name), // ✅ use real weight if passed
-          nutrition: nutrition
-            ? nutrition.map(({ display_name, amount, unit }) => ({
-                name: display_name,
-                value: `${amount} ${unit}`,
-              }))
-            : [],
-        })
-      );
+      const cleanProducts = selectedProducts.map((product) => {
+        const { id, name, nutrition, weight, unit, fullWeight } = product;
+
+        const parsedId = id || 'unknown id';
+        const parsedName = name || 'Ukjent produkt';
+        const fallback = extractWeightFromName(name);
+        const parsedWeight = weight || fallback.fallbackWeight || 100;
+        const parsedUnit = unit || fallback.fallbackUnit || 'g';
+        const full = fullWeight || parsedWeight;
+
+        const { normalizedWeight, normalizedUnit } = normalizeUnit(
+          full,
+          parsedUnit
+        );
+
+        // This is the key fix - calculate the scale factor correctly
+        // Nutrition values are typically per 100g/100ml, so we need to scale accordingly
+        const scaleFactor = parsedWeight / 100; // Scale based on selected weight vs 100g/ml standard
+
+        console.log('Product scaling debug:');
+        console.log('- parsedWeight:', parsedWeight);
+        console.log('- normalizedWeight:', normalizedWeight);
+        console.log('- scaleFactor:', scaleFactor);
+
+        const mappedNutrition = Array.isArray(nutrition)
+          ? nutrition.map((item) => {
+              // Convert amount to number if it's not already
+              const baseAmount =
+                typeof item.amount === 'number'
+                  ? item.amount
+                  : parseFloat(String(item.amount).replace(',', '.')) || 0;
+
+              // Scale the amount based on the selected weight (per 100g/ml)
+              const scaledAmount = (baseAmount * scaleFactor).toFixed(2);
+
+              // Include the unit if available
+              const unitStr = item.unit || '';
+
+              return {
+                name: item.display_name || item.name || 'Ukjent næringsstoff',
+                value: `${scaledAmount}${unitStr ? ' ' + unitStr : ''}`.trim(),
+              };
+            })
+          : [];
+
+        return {
+          id: parsedId,
+          name: parsedName,
+          weight: parsedWeight,
+          nutrition: mappedNutrition,
+        };
+      });
 
       await addDoc(collection(db, 'foodLogs'), {
         userId: user.uid,
         meal: mealName,
         products: cleanProducts,
-        date: serverTimestamp(), // Renamed for consistency
+        date: serverTimestamp(),
       });
 
-      alert(`Produkter Logget i ${mealName}! `);
-
-      refreshCalories(); // Re-fetch calorie data immediately after logging
-      refreshMacros(); // Re-fetch macro data immediately after logging
-
+      alert(`Produkter Logget i ${mealName}!`);
+      refreshCalories();
+      refreshMacros();
       resetSelection();
     } catch (err) {
+      console.error('Error logging products:', err);
       alert('Noe gikk galt, prøv igjen senere ' + err);
     }
   };
