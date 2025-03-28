@@ -1,5 +1,5 @@
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '/firebase'; // from firebase.js in root
+import { db } from '/firebase';
 
 // Get today's food logs for a specific user
 export async function getTodaysLoggedFoods(userId) {
@@ -44,6 +44,42 @@ export function extractCaloriesFromLoggedFood(foodLog) {
       calories: Math.round(totalCalories),
     };
   });
+}
+
+// Extract protein, fat, and carbs from food logs, scaled by weight
+export function extractMacrosFromLoggedFood(foodLog) {
+  const products = foodLog.products || [];
+
+  const totals = {
+    carbs: 0,
+    protein: 0,
+    fat: 0,
+  };
+
+  products.forEach((product) => {
+    const nutrition = product.nutrition || [];
+    const weight = product.weight || 100;
+
+    nutrition.forEach((n) => {
+      const name = n.name?.toLowerCase();
+      const rawValue = parseFloat(n.value.replace('g', '').trim());
+
+      if (isNaN(rawValue)) return;
+
+      const scaled = (rawValue / 100) * weight;
+
+      if (name.includes('karbohydrater')) totals.carbs += scaled;
+      if (name.includes('protein')) totals.protein += scaled;
+      if (name.includes('fett') && !name.includes('mettet'))
+        totals.fat += scaled;
+    });
+  });
+
+  return {
+    carbs: Math.round(totals.carbs),
+    protein: Math.round(totals.protein),
+    fat: Math.round(totals.fat),
+  };
 }
 
 // Convert the full nutrition array into a key-value map
