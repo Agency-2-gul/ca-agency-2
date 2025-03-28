@@ -90,7 +90,7 @@ const CalorieTracker = () => {
     >
       <div
         className="h-[200px] w-full mx-4 flex items-center justify-start rounded-xl shadow-md -mt-8"
-        style={{ backgroundColor: '#F7F7F7' }}
+        style={{ backgroundColor: '#FFFFFF' }}
       >
         <div>
           <CalorieProgress
