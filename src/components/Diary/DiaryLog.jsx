@@ -68,29 +68,35 @@ const DiaryLog = () => {
         return (
           <div key={meal.name} className="rounded-xl shadow-md">
             {/* Meal Header */}
-            <div
-              className="flex justify-between items-center bg-white p-4 rounded-xl shadow-md cursor-pointer"
-              onClick={() => toggleMeal(mealKey)}
-            >
-              <div>
-                <p className="text-xs text-gray-500">
-                  Anbefalt: {meal.recommended} kcal
-                </p>
-                <h2 className="text-lg font-semibold">{meal.name}</h2>
-                <p className="text-orange-500 font-medium">
-                  {loggedData.totalKcal} kcal
-                </p>
+            <div className="">
+              <div
+                className="flex justify-between items-center bg-white p-4 cursor-pointer"
+                onClick={() => toggleMeal(mealKey)}
+              >
+                <div>
+                  <p className="text-xs text-gray-500">
+                    Anbefalt: {meal.recommended} kcal
+                  </p>
+                  <h2 className="text-lg font-semibold">{meal.name}</h2>
+                  <p className="text-orange-500 font-medium">
+                    {loggedData.totalKcal} kcal
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent dropdown toggle when clicking the button
+                      navigate(`/log-products/${mealKey}`);
+                    }}
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent dropdown toggle when clicking the button
-                    navigate(`/log-products/${mealKey}`);
-                  }}
-                >
-                  <FaPlus />
-                </button>
+              <div className="flex justify-center mt-2 border-t-1 border-gray-200 w-[50%] mx-auto">
+                {' '}
+                {/* Center the chevron */}
                 {isExpanded ? (
                   <FaChevronUp className="text-gray-500" />
                 ) : (

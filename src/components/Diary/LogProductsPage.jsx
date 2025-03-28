@@ -3,6 +3,7 @@ import { useState } from 'react';
 import useLogProducts from '../../hooks/useLogProducts';
 import useProductSearch from '../../hooks/useProductSearch';
 import { FaPlus } from 'react-icons/fa';
+
 import { FaCheckCircle } from 'react-icons/fa';
 
 const LogProductsPage = () => {
@@ -61,9 +62,9 @@ const LogProductsPage = () => {
           <li
             key={product.id}
             className="flex items-center p-4 bg-white rounded-2xl shadow-md hover:bg-gray-50 transition"
-            onClick={() => handleAddProduct(product)}
           >
             {/* Product Image */}
+            <span>{product.id}</span>
             <img
               className="object-contain aspect-3/2 h-8 w-auto rounded-lg"
               src={product.image}
@@ -76,11 +77,21 @@ const LogProductsPage = () => {
 
             {/* Product Details */}
             <div className="flex flex-col flex-grow">
-              <span className="font-semibold text-lg">{product.name}</span>
+              <span
+                onClick={() =>
+                  navigate(`/product/${product.id}`, { state: { product } })
+                }
+                className="font-semibold text-lg"
+              >
+                {product.name}
+              </span>
             </div>
 
             {/* Add Button */}
-            <button className=" text-orange-500 p-3 rounded-full">
+            <button
+              className="text-orange-500 p-3 rounded-full"
+              onClick={() => handleAddProduct(product)}
+            >
               <FaPlus />
             </button>
           </li>
