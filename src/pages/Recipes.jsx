@@ -1,8 +1,10 @@
-import RecepiesMain from '../components/recepies/RecepiesMain';
+import RecepiesMostLiked from '../components/recepies/RecepiesMostLiked';
+import SearchRecepie from '../components/recepies/SearchRecepie';
 const Recipes = () => {
   return (
-    <div className="w-full h-full bg-red-800">
-      <RecepiesMain />
+    <div>
+      <SearchRecepie />
+      <RecepiesMostLiked />
     </div>
   );
 };
