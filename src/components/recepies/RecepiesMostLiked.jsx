@@ -6,7 +6,7 @@ const RecepiesMostLiked = () => {
     <div className="p-4">
       <h1 className="font-bold text-xl">Utvalgte Oppskrifter</h1>
       <span className="text-gray-600 text-sm">Mest populære denne uken</span>
-      <div className="mt-4 bg-white shadow-md rounded-lg p-4 items-center border max-w-[388px]">
+      <div className="mt-4 bg-white shadow-lg rounded-lg p-4 items-center max-w-[388px]">
         <div className="flex justify-between border-b-1 border-gray-200 mb-2">
           <h2 className="font-semibold">Pasta med pesto</h2>
           <span className="text-gray-500 text-sm">Frokost</span>
