@@ -6,6 +6,7 @@ import Profile from './pages/Profile';
 import ProductPage from './components/product/ProductPage';
 import Diary from './pages/Diary';
 import LogProductsPage from './components/Diary/LogProductsPage';
+import CreateRecepie from './components/recepies/recepies-db/CreateRecepie';
 
 const App = () => (
   <Routes>
@@ -16,6 +17,7 @@ const App = () => (
       <Route path="product/:id" element={<ProductPage />} />
       <Route path="/log-products/:mealName" element={<LogProductsPage />} />
       <Route path="recipes" element={<Recipes />} />
+      <Route path="recepies-db/CreateRecepie" element={<CreateRecepie />} />
     </Route>
   </Routes>
 );
