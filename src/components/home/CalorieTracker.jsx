@@ -11,7 +11,7 @@ import MacroTracker from './MacroTracker';
 import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
 import useMacroStore from '../../stores/macroStore';
 import { calculateTotalCaloriesFromLogs } from '../../utils/calculateCaloriesFromFoodLogs';
-import useWaterStore from '../../stores/waterStore'; // ✅ Import store
+import useWaterStore from '../../stores/waterStore';
 
 const CalorieTracker = () => {
   const { user, authReady } = useAuth();

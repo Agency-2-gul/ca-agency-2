@@ -7,12 +7,13 @@ import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
 import BarcodeIcon from '../../assets/Barcode_Icon.png';
 import WaterLogModal from '../water/WaterLogModal';
+import WaterLogger from '../water/WaterLogger';
 
 const FooterPopup = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
-
+  const [openLogger, setOpenLogger] = useState(null); // 'weight', 'water', or null
   const [waterModalOpen, setWaterModalOpen] = useState(false);
 
   const handleModal = () => setIsModalOpen(true);
@@ -90,13 +91,19 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
           </div>
 
           <div className="p-3 flex flex-col gap-y-2 rounded-lg">
-            <button
-              className="flex items-center justify-start bg-[#FAFAFA] gap-3 p-4 rounded-lg"
-              onClick={() => setWaterModalOpen(true)}
-            >
-              <span>Logg vann</span>
-            </button>
-            <WeightLogger user={user} />
+            <WaterLogger
+              isOpen={openLogger === 'water'}
+              onToggle={() =>
+                setOpenLogger((prev) => (prev === 'water' ? null : 'water'))
+              }
+            />
+            <WeightLogger
+              user={user}
+              isOpen={openLogger === 'weight'}
+              onToggle={() =>
+                setOpenLogger((prev) => (prev === 'weight' ? null : 'weight'))
+              }
+            />
           </div>
         </div>
       </motion.div>
