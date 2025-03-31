@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useLocation } from 'react-router-dom';
 import LogModal from './LogModal';
@@ -15,11 +15,20 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
   const handleModal = () => setIsModalOpen(true);
 
   const location = useLocation();
+  const prevPathRef = useRef(location.pathname);
 
   useEffect(() => {
-    if (location.pathname.startsWith('/log-products')) {
+    const prevPath = prevPathRef.current;
+    const currentPath = location.pathname;
+
+    if (
+      currentPath.startsWith('/log-products') &&
+      !prevPath.startsWith('/log-products')
+    ) {
       setIsOpen(false);
     }
+
+    prevPathRef.current = currentPath;
   }, [location.pathname]);
 
   useEffect(() => {
