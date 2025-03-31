@@ -97,11 +97,13 @@ const DiaryLog = () => {
               <div className="flex justify-center mt-2 border-t-1 border-gray-200 w-[50%] mx-auto">
                 {' '}
                 {/* Center the chevron */}
-                {isExpanded ? (
-                  <FaChevronUp className="text-gray-500" />
-                ) : (
-                  <FaChevronDown className="text-gray-500" />
-                )}
+                {loggedMeals[mealKey] && loggedData.products.length > 0 ? (
+                  isExpanded ? (
+                    <FaChevronUp className="text-gray-500" />
+                  ) : (
+                    <FaChevronDown className="text-gray-500" />
+                  )
+                ) : null}
               </div>
             </div>
 
