@@ -17,8 +17,8 @@ const NutritionCard = ({ nutrition }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 space-y-2">
-      <h3 className="text-lg font-semibold text-center text-gray-700">
-        Næringsinnhold
+      <h3 className="text-lg font-semibold text-center text-gray-700 pb-4">
+        Næringsinnhold per 100g/100ml
       </h3>
       <div className="grid grid-cols-2 gap-3">
         {nutrition.map(({ display_name, amount, unit }) => (

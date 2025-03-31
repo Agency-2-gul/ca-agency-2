@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useLocation } from 'react-router-dom';
 import LogModal from './LogModal';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
@@ -12,6 +13,14 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
   const [scannerOpen, setScannerOpen] = useState(false);
 
   const handleModal = () => setIsModalOpen(true);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/log-products')) {
+      setIsOpen(false);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const auth = getAuth();
@@ -54,7 +63,7 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
         <div className="max-w-md mx-auto mt-2 w-full flex flex-col space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <button
-              className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow"
+              className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow cursor-pointer"
               onClick={handleModal}
             >
               <span>Logg mat</span>
