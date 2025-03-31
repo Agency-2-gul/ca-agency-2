@@ -6,11 +6,14 @@ import LogModal from './LogModal';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
 import BarcodeIcon from '../../assets/Barcode_Icon.png';
+import WaterLogModal from '../water/WaterLogModal';
 
 const FooterPopup = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
+
+  const [waterModalOpen, setWaterModalOpen] = useState(false);
 
   const handleModal = () => setIsModalOpen(true);
 
@@ -87,9 +90,12 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
           </div>
 
           <div className="p-3 flex flex-col gap-y-2 rounded-lg">
-            <div className="flex items-center bg-[#FAFAFA] gap-3 p-4 rounded-lg">
-              <span>Vann</span>
-            </div>
+            <button
+              className="flex items-center justify-start bg-[#FAFAFA] gap-3 p-4 rounded-lg"
+              onClick={() => setWaterModalOpen(true)}
+            >
+              <span>Logg vann</span>
+            </button>
             <WeightLogger user={user} />
           </div>
         </div>
@@ -108,6 +114,11 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
             />
           </div>
         </div>
+      )}
+
+      {/* Water Log Modal */}
+      {waterModalOpen && (
+        <WaterLogModal onClose={() => setWaterModalOpen(false)} />
       )}
     </>
   );
