@@ -8,7 +8,7 @@ const Layout = () => (
   <div className="flex flex-col min-h-screen">
     <FirebaseAuth />
     <Header />
-    <main className="flex-grow pt-2 pb-[100px]">
+    <main className="flex-grow pt-2 pb-[100px] max-w-[1400px] mx-auto w-full">
       <Outlet />
     </main>
     <Footer />

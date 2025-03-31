@@ -77,7 +77,7 @@ export default function FooterNav() {
       </div>
 
       {/* Desktop Footer */}
-      <div className="hidden md:flex justify-center items-center py-4 text-sm text-gray-500 border-t">
+      <div className="hidden md:flex justify-center items-center py-4 text-sm text-gray-500 shadow-lg'">
         <p className="text-center">
           &copy; {new Date().getFullYear()} Matboksen – Agency-gruppe-gul
         </p>
