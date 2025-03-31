@@ -58,27 +58,24 @@ export function extractMacrosFromLoggedFood(foodLog) {
 
   products.forEach((product) => {
     const nutrition = product.nutrition || [];
-    const weight = product.weight || 100;
 
     nutrition.forEach((n) => {
       const name = n.name?.toLowerCase();
-      const rawValue = parseFloat(n.value.replace('g', '').trim());
+      const rawValue = parseFloat(n.value.replace(/[^\d.]/g, ''));
 
       if (isNaN(rawValue)) return;
 
-      const scaled = Math.max(0, (rawValue / 100) * weight); // ⬅️ Clamp to 0
-
-      if (name.includes('karbohydrater')) totals.carbs += scaled;
-      if (name.includes('protein')) totals.protein += scaled;
+      if (name.includes('karbohydrater')) totals.carbs += rawValue;
+      if (name.includes('protein')) totals.protein += rawValue;
       if (name.includes('fett') && !name.includes('mettet'))
-        totals.fat += scaled;
+        totals.fat += rawValue;
     });
   });
 
   return {
-    carbs: Math.round(Math.max(0, totals.carbs)),
-    protein: Math.round(Math.max(0, totals.protein)),
-    fat: Math.round(Math.max(0, totals.fat)),
+    carbs: Math.round(totals.carbs),
+    protein: Math.round(totals.protein),
+    fat: Math.round(totals.fat),
   };
 }
 
