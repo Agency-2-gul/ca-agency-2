@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
-/**
- * Combined component for selecting amount (handles both liquid and solid products)
- */
 const AmountSelector = ({
   value,
   onChange,
@@ -15,7 +12,6 @@ const AmountSelector = ({
 }) => {
   const intervalRef = useRef(null);
 
-  // Handlers for continuous increment/decrement
   const startContinuousChange = (type) => {
     clearInterval(intervalRef.current);
     const change = () => {
@@ -34,13 +30,25 @@ const AmountSelector = ({
   const stopContinuousChange = () => clearInterval(intervalRef.current);
 
   const handleInputChange = (e) => {
-    const val = Number(e.target.value);
-    if (!isNaN(val)) {
-      onChange(Math.min(Math.max(val, min), max));
+    let inputValue = e.target.value;
+
+    if (value === 0 && /^[0-9]$/.test(inputValue)) {
+      inputValue = inputValue.slice(-1);
+    }
+
+    inputValue = inputValue.replace(/^0+/, '');
+
+    if (inputValue === '') {
+      onChange('');
+      return;
+    }
+
+    const num = Number(inputValue);
+    if (!isNaN(num)) {
+      onChange(Math.min(Math.max(num, min), max));
     }
   };
 
-  // Liquid products use a dropdown
   if (isLiquid) {
     const generateOptions = () => {
       const options = [];
