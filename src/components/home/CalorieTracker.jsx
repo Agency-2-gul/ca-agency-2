@@ -11,6 +11,7 @@ import MacroTracker from './MacroTracker';
 import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
 import useMacroStore from '../../stores/macroStore';
 import { calculateTotalCaloriesFromLogs } from '../../utils/calculateCaloriesFromFoodLogs';
+import useWaterStore from '../../stores/waterStore'; // ✅ Import store
 
 const CalorieTracker = () => {
   const { user, authReady } = useAuth();
@@ -19,6 +20,7 @@ const CalorieTracker = () => {
     useCalorieStore();
   const [isGoalMenuOpen, setIsGoalMenuOpen] = useState(false);
   const inputRef = useRef(null);
+  const { water, setWater } = useWaterStore(); // ✅ Use water store
 
   useEffect(() => {
     if (!authReady || !user) return;
@@ -33,7 +35,7 @@ const CalorieTracker = () => {
       }
     };
 
-    const fetchGoal = async () => {
+    const fetchGoalAndWater = async () => {
       try {
         const db = getFirestore();
         const userRef = doc(db, 'users', user.uid);
@@ -41,18 +43,17 @@ const CalorieTracker = () => {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          if (data.calorieGoal) {
-            setDailyCalorieGoal(data.calorieGoal);
-          }
+          if (data.calorieGoal) setDailyCalorieGoal(data.calorieGoal);
+          if (typeof data.water === 'number') setWater(data.water); // ✅ set Zustand value
         }
       } catch (err) {
-        console.error('Failed to fetch user goal:', err);
+        console.error('Failed to fetch user goal/water:', err);
       }
     };
 
-    fetchGoal();
+    fetchGoalAndWater();
     fetchLoggedFoods();
-  }, [authReady, user, triggerUpdate]);
+  }, [authReady, user, triggerUpdate, setWater]);
 
   const handleUpdateGoal = async (newGoal) => {
     const parsedGoal = parseInt(newGoal, 10);
@@ -157,7 +158,7 @@ const CalorieTracker = () => {
             </span>
             <div className="flex flex-col items-start">
               <p className="font-medium">Vann</p>
-              <p className="font-bold">1L</p>
+              <p className="font-bold">{water.toFixed(2)} L</p>
             </div>
           </div>
         </div>
