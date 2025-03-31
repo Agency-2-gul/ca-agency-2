@@ -1,10 +1,11 @@
 import { FaSearch } from 'react-icons/fa';
+import calorieTrackerImg from '../../assets/calorie-tracker.png';
 
 const SearchRecepie = () => {
   return (
     <div
       className="flex items-center justify-center w-full h-12 bg p-2"
-      style={{ backgroundImage: `url(/src/assets/calorie-tracker.png)` }}
+      style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
       <input
         type="text"
