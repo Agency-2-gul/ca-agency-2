@@ -5,16 +5,14 @@ import { useLocation } from 'react-router-dom';
 import LogModal from './LogModal';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
-import BarcodeIcon from '../../assets/Barcode_Icon.png';
-import WaterLogModal from '../water/WaterLogModal';
 import WaterLogger from '../water/WaterLogger';
+import BarcodeIcon from '../../assets/Barcode_Icon.png';
 
 const FooterPopup = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
   const [openLogger, setOpenLogger] = useState(null); // 'weight', 'water', or null
-  const [waterModalOpen, setWaterModalOpen] = useState(false);
 
   const handleModal = () => setIsModalOpen(true);
 
@@ -58,20 +56,20 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
         <LogModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
       )}
 
-      {/* Backdrop to close on outside click */}
+      {/* Backdrop */}
       <div
         className="fixed inset-0 z-20 bg-black/20"
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Slide-up popup */}
+      {/* Slide-up menu */}
       <motion.div
         className="fixed bottom-[64px] bg-gradient-to-t from-[#E64D20] to-[#F67B39] left-0 w-full max-h-[calc(100vh-64px)] h-auto shadow-xl p-6 rounded-t-2xl z-30 overflow-y-auto"
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', duration: 0.3, bounce: 0 }}
-        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="max-w-md mx-auto mt-2 w-full flex flex-col space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -98,7 +96,6 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
               }
             />
             <WeightLogger
-              user={user}
               isOpen={openLogger === 'weight'}
               onToggle={() =>
                 setOpenLogger((prev) => (prev === 'weight' ? null : 'weight'))
@@ -108,24 +105,17 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
         </div>
       </motion.div>
 
-      {/* Barcode Scanner Modal */}
+      {/* Barcode Scanner */}
       {scannerOpen && (
         <div className="fixed inset-0 z-[999] bg-black/80 flex items-center justify-center">
-          <div className="w-full h-full flex items-center justify-center">
-            <BarcodeScanner
-              onClose={() => setScannerOpen(false)}
-              onScanSuccess={() => {
-                setScannerOpen(false);
-                setIsOpen(false);
-              }}
-            />
-          </div>
+          <BarcodeScanner
+            onClose={() => setScannerOpen(false)}
+            onScanSuccess={() => {
+              setScannerOpen(false);
+              setIsOpen(false);
+            }}
+          />
         </div>
-      )}
-
-      {/* Water Log Modal */}
-      {waterModalOpen && (
-        <WaterLogModal onClose={() => setWaterModalOpen(false)} />
       )}
     </>
   );
