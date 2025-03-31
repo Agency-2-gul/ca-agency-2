@@ -13,7 +13,7 @@ const RecepiesMostLiked = () => {
         onClick={handleClick}
         className="bg-orange-500 p-2 rounded-full shadow-xl text-white font-bold cursor-pointer"
       >
-        NEW RECEPIE
+        NEW RECEPIE__Under Construction
       </button>
       <h1 className="font-bold text-xl">Utvalgte Oppskrifter</h1>
       <span className="text-gray-600 text-sm">Mest populære denne uken</span>
