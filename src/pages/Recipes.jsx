@@ -1,7 +1,7 @@
-import RecepiesMostLiked from '../components/recepies/RecepiesMostLiked';
-import SearchRecepie from '../components/recepies/SearchRecepie';
-import NewestRecepies from '../components/recepies/NewestRecepies';
-import MyRecepies from '../components/recepies/MyRecepies';
+import RecepiesMostLiked from '../components/recepies/recepies-main/RecepiesMostLiked';
+import SearchRecepie from '../components/recepies/recepies-main/SearchRecepie';
+import NewestRecepies from '../components/recepies/recepies-main/NewestRecepies';
+import MyRecepies from '../components/recepies/recepies-main/MyRecepies';
 const Recipes = () => {
   return (
     <div className="flex flex-col gap-y-16">

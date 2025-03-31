@@ -1,5 +1,5 @@
 import { FaSearch } from 'react-icons/fa';
-import calorieTrackerImg from '../../assets/calorie-tracker.png';
+import calorieTrackerImg from '../../../assets/calorie-tracker.png';
 
 const SearchRecepie = () => {
   return (
