@@ -3,19 +3,17 @@ import calorieTrackerImg from '../../assets/calorie-tracker.png';
 import CalorieProgress from './CalorieProgressCircle';
 import { FaFontAwesomeFlag, FaAppleAlt } from 'react-icons/fa';
 import { FaGlassWater } from 'react-icons/fa6';
-import {
-  getTodaysLoggedFoods,
-  extractCaloriesFromLoggedFood,
-} from '../../utils/foodLogs';
+import { getTodaysLoggedFoods } from '../../utils/foodLogs';
 import { useAuth } from '../../context/authContext';
 import useCalorieStore from '../../stores/calorieStore';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import MacroTracker from './MacroTracker';
 import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
 import useMacroStore from '../../stores/macroStore';
+import { calculateTotalCaloriesFromLogs } from '../../utils/calculateCaloriesFromFoodLogs';
 
 const CalorieTracker = () => {
-  const { user, authReady } = useAuth(); // use user and authReady from context
+  const { user, authReady } = useAuth();
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(2800);
   const { consumedCalories, setConsumedCalories, triggerUpdate } =
     useCalorieStore();
@@ -23,20 +21,12 @@ const CalorieTracker = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (!authReady || !user) return; // wait for Firebase to be ready
+    if (!authReady || !user) return;
 
     const fetchLoggedFoods = async () => {
       try {
         const logs = await getTodaysLoggedFoods(user.uid);
-
-        let total = 0;
-        logs.forEach((log) => {
-          const products = extractCaloriesFromLoggedFood(log);
-          products.forEach((product) => {
-            total += product.calories;
-          });
-        });
-
+        const total = calculateTotalCaloriesFromLogs(logs);
         setConsumedCalories(total);
       } catch (error) {
         console.error('Error fetching logged foods:', error);
@@ -60,9 +50,9 @@ const CalorieTracker = () => {
       }
     };
 
-    fetchGoal(); // fetch the goal from Firestore
+    fetchGoal();
     fetchLoggedFoods();
-  }, [authReady, user, triggerUpdate]); // re-run if state changes
+  }, [authReady, user, triggerUpdate]);
 
   const handleUpdateGoal = async (newGoal) => {
     const parsedGoal = parseInt(newGoal, 10);
@@ -73,10 +63,10 @@ const CalorieTracker = () => {
       try {
         const db = getFirestore();
         const userRef = doc(db, 'users', user.uid);
-        await setDoc(userRef, { calorieGoal: parsedGoal }, { merge: true }); // save it
+        await setDoc(userRef, { calorieGoal: parsedGoal }, { merge: true });
 
-        await setDefaultMacroGoals(); // set default macros based on daily calorie goal
-        useMacroStore.getState().refreshMacros(); // refresh macros in the store
+        await setDefaultMacroGoals();
+        useMacroStore.getState().refreshMacros();
       } catch (err) {
         console.error('Error saving goal:', err);
       }
@@ -99,7 +89,6 @@ const CalorieTracker = () => {
           />
         </div>
 
-        {/* Right Side: Text Content */}
         <div
           className="flex flex-col justify-center ml-auto mr-10 space-y-3 relative top-1 text-sm z-1"
           style={{ color: '#333333' }}
@@ -110,7 +99,7 @@ const CalorieTracker = () => {
           >
             Endre mål
           </button>
-          {/* 🔽 Dropdown */}
+
           {isGoalMenuOpen && (
             <div className="absolute top-[1.2rem] mt-1 bg-white border border-gray-300 rounded shadow-lg p-2 z-20">
               <input
@@ -138,6 +127,7 @@ const CalorieTracker = () => {
               </div>
             </div>
           )}
+
           {/* Grunnmål */}
           <div className="flex flex-row items-center gap-2">
             <span className="text-gray-500">
