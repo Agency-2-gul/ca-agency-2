@@ -2,61 +2,69 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { getTodaysLoggedFoods } from '../../utils/foodLogs';
-import { getAuth } from 'firebase/auth';
+import { useAuth } from '../../context/authContext';
+import useCalorieStore from '../../stores/calorieStore';
+import MiniCalorieTracker from '../calorie-tracker/MiniCalorieTracker';
+import { calculateTotalCaloriesFromLogs } from '../../utils/calculateCaloriesFromFoodLogs';
 
 const DiaryLog = () => {
   const navigate = useNavigate();
   const [loggedMeals, setLoggedMeals] = useState({});
-  const [expandedMeal, setExpandedMeal] = useState(null); // Track which meal is expanded
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const [expandedMeal, setExpandedMeal] = useState(null);
+  const { setConsumedCalories } = useCalorieStore();
+  const { user, authReady } = useAuth();
 
   const meals = [
-    { name: 'Frokost', recommended: '300-500', logged: 0 },
-    { name: 'Lunsj', recommended: '750-1150', logged: 0 },
-    { name: 'Middag', recommended: '1060-1480', logged: 0 },
-    { name: 'Snacks', recommended: '200', logged: 0 },
-    { name: 'Kvelds', recommended: '200', logged: 0 },
+    { name: 'Frokost', recommended: '300-500' },
+    { name: 'Lunsj', recommended: '750-1150' },
+    { name: 'Middag', recommended: '1060-1480' },
+    { name: 'Snacks', recommended: '200' },
+    { name: 'Kvelds', recommended: '200' },
   ];
 
   const formatMealName = (name) => name.toLowerCase().replace(/\s+/g, '-');
 
   useEffect(() => {
-    if (user) {
-      getTodaysLoggedFoods(user.uid).then((foodLogs) => {
-        const groupedLogs = foodLogs.reduce((acc, log) => {
-          if (!acc[log.meal]) acc[log.meal] = { totalKcal: 0, products: [] };
+    if (!authReady || !user) return;
 
-          log.products.forEach((product) => {
-            const kcalEntry = product.nutrition.find(
-              (n) =>
-                n.name.toLowerCase() === 'kalorier' ||
-                n.name.toLowerCase() === 'kcal'
-            );
+    getTodaysLoggedFoods(user.uid).then((foodLogs) => {
+      // Group by meal
+      const groupedLogs = foodLogs.reduce((acc, log) => {
+        if (!acc[log.meal]) acc[log.meal] = { totalKcal: 0, products: [] };
 
-            // Extract numeric kcal value
-            const kcalValue = kcalEntry?.value
-              ? parseFloat(kcalEntry.value.replace(/[^\d.]/g, '')) // Remove non-numeric characters
-              : 0;
+        log.products.forEach((product) => {
+          const kcalEntry = product.nutrition.find(
+            (n) =>
+              n.name.toLowerCase() === 'kalorier' ||
+              n.name.toLowerCase() === 'kcal'
+          );
 
-            acc[log.meal].totalKcal += kcalValue;
-            acc[log.meal].products.push(product);
-          });
+          const kcalValue = kcalEntry?.value
+            ? parseFloat(kcalEntry.value.replace(/[^\d.]/g, ''))
+            : 0;
 
-          return acc;
-        }, {});
+          acc[log.meal].totalKcal += kcalValue;
+          acc[log.meal].products.push(product);
+        });
 
-        setLoggedMeals(groupedLogs);
-      });
-    }
-  }, [user]);
+        return acc;
+      }, {});
+
+      setLoggedMeals(groupedLogs);
+
+      // Set total calories in store
+      const totalCalories = calculateTotalCaloriesFromLogs(foodLogs);
+      setConsumedCalories(totalCalories);
+    });
+  }, [authReady, user]);
 
   const toggleMeal = (mealKey) => {
     setExpandedMeal((prev) => (prev === mealKey ? null : mealKey));
   };
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="px-4">
+      <MiniCalorieTracker />
       {meals.map((meal) => {
         const mealKey = formatMealName(meal.name);
         const loggedData = loggedMeals[mealKey] || {
@@ -67,7 +75,6 @@ const DiaryLog = () => {
 
         return (
           <div key={meal.name} className="rounded-xl shadow-md">
-            {/* Meal Header */}
             <div className="">
               <div
                 className="flex justify-between items-center bg-white p-4 cursor-pointer"
@@ -86,7 +93,7 @@ const DiaryLog = () => {
                   <button
                     className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent dropdown toggle when clicking the button
+                      e.stopPropagation();
                       navigate(`/log-products/${mealKey}`);
                     }}
                   >
@@ -94,20 +101,16 @@ const DiaryLog = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex justify-center mt-2 border-t-1 border-gray-200 w-[50%] mx-auto">
-                {' '}
-                {/* Center the chevron */}
-                {loggedMeals[mealKey] && loggedData.products.length > 0 ? (
-                  isExpanded ? (
+              <div className="flex justify-center mt-2 border-t border-gray-200 w-[50%] mx-auto">
+                {loggedData.products.length > 0 &&
+                  (isExpanded ? (
                     <FaChevronUp className="text-gray-500" />
                   ) : (
                     <FaChevronDown className="text-gray-500" />
-                  )
-                ) : null}
+                  ))}
               </div>
             </div>
 
-            {/* Dropdown for logged products */}
             {isExpanded && loggedData.products.length > 0 && (
               <ul className="mt-2 space-y-2 bg-gray-50 p-4 rounded-b-xl">
                 {loggedData.products.map((product, i) => (
