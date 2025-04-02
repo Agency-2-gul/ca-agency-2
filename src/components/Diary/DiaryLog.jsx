@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import {
-  getTodaysLoggedFoods,
-  calculateTotalCaloriesFromLogs,
-} from '../../utils/foodLogs';
+import { getTodaysLoggedFoods } from '../../utils/foodLogs';
 import { useAuth } from '../../context/authContext';
 import useCalorieStore from '../../stores/calorieStore';
 import MiniCalorieTracker from '../calorie-tracker/MiniCalorieTracker';
+import { calculateTotalCaloriesFromLogs } from '../../utils/calculateCaloriesFromFoodLogs';
 
 const DiaryLog = () => {
   const navigate = useNavigate();
@@ -56,7 +54,7 @@ const DiaryLog = () => {
 
       // Set total calories in store
       const totalCalories = calculateTotalCaloriesFromLogs(foodLogs);
-      setConsumedCalories(Math.round(totalCalories));
+      setConsumedCalories(totalCalories);
     });
   }, [authReady, user]);
 
