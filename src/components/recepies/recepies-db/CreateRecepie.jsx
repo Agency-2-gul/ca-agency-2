@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { FaPlus, FaMinus, FaCheckCircle } from 'react-icons/fa';
+import useLogNewRecepie from '../../../hooks/useLogRecepies';
 
 export default function CreateRecipe() {
+  const { logRecepie } = useLogNewRecepie();
+  const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   const [steps, setSteps] = useState(['']);
 
+  // Adding and removing ingredients and steps...
   const addIngredient = () => setIngredients([...ingredients, '']);
   const addStep = () => setSteps([...steps, '']);
-
   const removeStep = (index) => {
     if (index > 0) {
       const newSteps = [...steps];
@@ -15,7 +18,6 @@ export default function CreateRecipe() {
       setSteps(newSteps);
     }
   };
-
   const removeIngredient = (index) => {
     if (index > 0) {
       const newIngredients = [...ingredients];
@@ -23,7 +25,7 @@ export default function CreateRecipe() {
       setIngredients(newIngredients);
     }
   };
-
+  // Handling changes in the input fields...
   const handleIngredientChange = (index, value) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = value;
@@ -36,14 +38,29 @@ export default function CreateRecipe() {
     setSteps(newSteps);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim()) {
+      alert('Oppgi en tittel for oppskriften!');
+      return;
+    }
+    await logRecepie(title, ingredients, steps);
+  };
+
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label className="font-semibold" htmlFor="rTitle">
             Hva kaller du din Oppskrift?
           </label>
-          <input type="text" name="rTitle" className="p-2 border rounded-md" />
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            name="rTitle"
+            className="p-2 border rounded-md"
+          />
         </div>
 
         {/* Ingredients Section */}
@@ -107,10 +124,15 @@ export default function CreateRecipe() {
             <FaPlus /> Legg til Trinn
           </button>
         </div>
-        <button type="submit">
-          <FaCheckCircle />
-        </button>
-        <span>Registrer Oppskrift</span>
+        {/* Submit Button */}
+        <div className="flex flex-col items-center">
+          <button
+            type="submit"
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+          >
+            <FaCheckCircle className="text-xl" /> Registrer Oppskrift
+          </button>
+        </div>
       </form>
     </div>
   );
