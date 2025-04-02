@@ -40,8 +40,6 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
   const handleLogClick = () => setShowMealModal(true);
 
   const handleMealConfirm = (selectedMeal) => {
-    // This is the important part - pass the original nutrition data unchanged
-    // Let the useLogProducts hook handle the scaling
     const loggedProduct = {
       id: product.id || 'unknown',
       name: product.name || 'Ukjent produkt',
@@ -59,7 +57,7 @@ const QuantitySelector = ({ totalAmount, unit, productName = '', product }) => {
   return (
     <>
       <div className="bg-white p-6 rounded-2xl space-y-4">
-        <h2 className="text-lg font-semibold text-orange-600 text-center">
+        <h2 className="text-lg font-semibold text-center">
           Velg mengde ({normalizedUnit})
         </h2>
 

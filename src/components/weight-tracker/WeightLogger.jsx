@@ -10,14 +10,13 @@ import { setDefaultMacroGoals } from '../../utils/setDefaultMacros';
 import useMacroStore from '../../stores/macroStore';
 import useWeightStore from '../../stores/weightStore';
 
-const WeightLogger = ({ defaultOpen = false }) => {
+const WeightLogger = ({ isOpen, onToggle }) => {
   const [weight, setWeight] = useState('');
   const [unit, setUnit] = useState('kg');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   useEffect(() => {
     const auth = getAuth();
@@ -61,11 +60,11 @@ const WeightLogger = ({ defaultOpen = false }) => {
         unit: 'kg',
       });
 
-      await setDefaultMacroGoals(); // calculate and store updated macro goals
+      await setDefaultMacroGoals();
+      useMacroStore.getState().refreshMacros();
+      useWeightStore.getState().refreshWeights();
 
       setSuccess(true);
-      useMacroStore.getState().refreshMacros(); // refresh macros after logging weight
-      useWeightStore.getState().refreshWeights(); // refresh weights after logging
     } catch (err) {
       console.error('Error logging weight:', err);
       setError('Feil ved lagring. Sjekk tillatelser.');
@@ -76,9 +75,12 @@ const WeightLogger = ({ defaultOpen = false }) => {
 
   return (
     <div className="w-full">
+      {/* Button with conditional border-radius */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 transition cursor-pointer"
+        onClick={onToggle}
+        className={`flex items-center justify-between w-full px-4 py-2 bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition cursor-pointer ${
+          isOpen ? 'rounded-t-lg border-b-0' : 'rounded-lg'
+        }`}
       >
         <span className="font-medium text-gray-700">Logg vekt</span>
         <svg
@@ -92,9 +94,10 @@ const WeightLogger = ({ defaultOpen = false }) => {
         </svg>
       </button>
 
+      {/* Attached dropdown */}
       {isOpen && (
-        <div className="mt-3">
-          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
+        <div className="-mt-1">
+          <div className="flex items-center gap-3 p-4 bg-white rounded-b-lg border-t-2 border-gray-300">
             <span className="text-gray-700 font-medium min-w-20">Vekt</span>
             <div className="flex-1">
               <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm p-1">
@@ -108,20 +111,9 @@ const WeightLogger = ({ defaultOpen = false }) => {
                     ).toFixed(1);
                     setWeight(newValue);
                   }}
-                  className="w-10 h-10 flex items-center justify-center text-gray-600 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                  className="w-10 h-10 flex items-center justify-center text-gray-600 rounded-lg hover:bg-gray-100"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  –
                 </button>
 
                 <div className="relative flex-1 mx-2">
@@ -142,20 +134,9 @@ const WeightLogger = ({ defaultOpen = false }) => {
                     const newValue = (currentValue + increment).toFixed(1);
                     setWeight(newValue);
                   }}
-                  className="w-10 h-10 flex items-center justify-center text-gray-600 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                  className="w-10 h-10 flex items-center justify-center text-gray-600 rounded-lg hover:bg-gray-100"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  +
                 </button>
               </div>
 
@@ -227,28 +208,28 @@ const WeightLogger = ({ defaultOpen = false }) => {
                   )}
                 </button>
               </div>
+
+              {error && (
+                <div className="px-4 -mt-1">
+                  <span className="text-red-500 text-sm flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {error}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-
-          {error && (
-            <div className="px-4 -mt-1">
-              <span className="text-red-500 text-sm flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-1"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                {error}
-              </span>
-            </div>
-          )}
         </div>
       )}
     </div>

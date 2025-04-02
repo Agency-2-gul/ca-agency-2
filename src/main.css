@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --orange-gradient: linear-gradient(to right, #FFC107 0%, #FF9800 100%);
+  --orange-gradient: linear-gradient(to right, #ffc107 0%, #ff9800 100%);
   --primary-text: #333333;
 }

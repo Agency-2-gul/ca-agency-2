@@ -8,6 +8,7 @@ import {
 } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { FaCamera } from 'react-icons/fa';
+import calorieTrackerImg from '../../assets/calorie-tracker.png';
 
 const ProfileImage = ({ user, setError }) => {
   const [profileImageUrl, setProfileImageUrl] = useState(user?.photoURL || '');
@@ -121,13 +122,16 @@ const ProfileImage = ({ user, setError }) => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div
+      className="relative h-[250px] bg-cover bg-center flex flex-col items-center justify-center mb-14"
+      style={{ backgroundImage: `url(${calorieTrackerImg})` }}
+    >
       <div className="relative">
         {profileImageUrl ? (
           <img
             src={profileImageUrl}
             alt="Profile"
-            className="w-32 h-32 rounded-full object-cover border-2 border-[#E64D20]"
+            className="w-32 h-32 rounded-full shadow-lg object-cover border-2 border-black"
           />
         ) : (
           <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center border-2 border-[#E64D20]">
@@ -167,9 +171,11 @@ const ProfileImage = ({ user, setError }) => {
           </p>
         </div>
       )}
-
-      <h2 className="mt-3 font-semibold">{user?.displayName || user?.email}</h2>
-
+      <div className="bg-white/86 p-1 mt-3 rounded-lg">
+        <h2 className="text-black font-semibold p-1">
+          {user?.displayName || user?.email}
+        </h2>
+      </div>
       {showChoiceModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center w-80">

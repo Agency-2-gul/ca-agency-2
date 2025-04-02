@@ -54,21 +54,22 @@ const MealSelectionModal = ({ isOpen, onClose, onConfirm, amount, unit }) => {
                 </option>
               ))}
             </select>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleConfirm}
+                disabled={!selectedMeal}
+                className="text-white w-full sm:w-[200px] mx-auto p-2 sm:p-3 rounded cursor-pointer bg-gradient-to-r from-[#E64D20] to-[#F67B39] relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                <span className="relative z-10 font-semibold">Bekreft</span>
+              </button>
 
-            <button
-              onClick={handleConfirm}
-              disabled={!selectedMeal}
-              className="text-white w-full sm:w-[200px] mx-auto p-2 sm:p-3 rounded cursor-pointer bg-gradient-to-r from-[#E64D20] to-[#F67B39] relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              <span className="relative z-10 font-semibold">Bekreft</span>
-            </button>
-
-            <button
-              onClick={handleClose}
-              className="text-sm text-gray-500 hover:underline"
-            >
-              Avbryt
-            </button>
+              <button
+                onClick={handleClose}
+                className="text-sm text-gray-500 hover:underline cursor-pointer"
+              >
+                Avbryt
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}

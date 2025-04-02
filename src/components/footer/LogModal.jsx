@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 const LogModal = ({ setIsModalOpen }) => {
   const navigate = useNavigate();
   const onClose = () => setIsModalOpen(false);
-  const MEAL_OPTIONS = ['Frokost', 'Lunsj', 'Middag', 'Snacks', 'Kvelds'];
   const handleConfirm = (meal) => {
     navigate(`/log-products/${encodeURIComponent(meal)}`);
     setIsModalOpen(false);
