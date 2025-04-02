@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { getTodaysLoggedFoods } from '../../utils/foodLogs';
 import { getAuth } from 'firebase/auth';
+import MiniCalorieTracker from '../calorie-tracker/MiniCalorieTracker';
 
 const DiaryLog = () => {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ const DiaryLog = () => {
 
   return (
     <div className="space-y-4 p-4">
+      <MiniCalorieTracker />
       {meals.map((meal) => {
         const mealKey = formatMealName(meal.name);
         const loggedData = loggedMeals[mealKey] || {
