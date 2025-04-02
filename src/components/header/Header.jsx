@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
-import LogModal from '../footer/LogModal';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showLogModal, setShowLogModal] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showWeightLogger, setShowWeightLogger] = useState(false);
 
@@ -67,12 +65,12 @@ const Header = () => {
                   onMouseLeave={() => setShowDropdown(false)}
                   className="absolute right-0 top-full mt-2 bg-white border rounded shadow-lg p-4 space-y-3 z-50 min-w-[220px]"
                 >
-                  <button
-                    onClick={() => setShowLogModal(true)}
+                  <Link
+                    to="/diary"
                     className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
                   >
-                    Logg mat
-                  </button>
+                    Logg manuelt
+                  </Link>
                   <button
                     onClick={() => setShowScanner(true)}
                     className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
@@ -91,15 +89,6 @@ const Header = () => {
           </nav>
         </div>
       </div>
-
-      {showLogModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <LogModal
-            isModalOpen={showLogModal}
-            setIsModalOpen={setShowLogModal}
-          />
-        </div>
-      )}
 
       {showScanner && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">

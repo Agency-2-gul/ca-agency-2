@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useLocation } from 'react-router-dom';
-import LogModal from './LogModal';
+import { useLocation, Link } from 'react-router-dom';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
 import WaterLogger from '../water/WaterLogger';
@@ -31,7 +30,7 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
     }
 
     prevPathRef.current = currentPath;
-  }, [location.pathname]);
+  }, [location.pathname, setIsOpen]);
 
   useEffect(() => {
     const auth = getAuth();
@@ -52,10 +51,6 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
 
   return (
     <>
-      {isModalOpen && (
-        <LogModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-      )}
-
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-20 bg-black/20"
@@ -73,12 +68,13 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
       >
         <div className="max-w-md mx-auto mt-2 w-full flex flex-col space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <button
+            <Link
+              to="/diary"
               className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow cursor-pointer"
-              onClick={handleModal}
             >
-              <span>Logg mat</span>
-            </button>
+              {' '}
+              Logg manuelt
+            </Link>
             <button
               onClick={() => setScannerOpen(true)}
               className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow cursor-pointer"
