@@ -5,11 +5,12 @@ import { FaGlassWater } from 'react-icons/fa6';
 import { useAuth } from '../../context/authContext';
 import useCalorieStore from '../../stores/calorieStore';
 import useWaterStore from '../../stores/waterStore';
+import calorieTrackerImg from '../../assets/calorie-tracker.png';
 
 const MiniCalorieTracker = () => {
   const { user, authReady } = useAuth();
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(2800);
-  const { consumedCalories } = useCalorieStore();
+  const { consumedCalories, triggerUpdate } = useCalorieStore();
   const { water, setWater } = useWaterStore();
 
   const remaining = Math.max(dailyCalorieGoal - consumedCalories, 0);
@@ -48,37 +49,47 @@ const MiniCalorieTracker = () => {
     if (authReady && user) {
       fetchGoalAndWater();
     }
-  }, [authReady, user]);
+  }, [authReady, user, triggerUpdate]);
 
   return (
-    <div className="bg-[#FF671F] text-white rounded-xl p-4 shadow mb-4">
-      <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-2 font-semibold text-sm">
-          <span className="w-2 h-2 bg-white rounded-full" />
-          <span>Kalorier</span>
+    <div
+      className="w-screen -mx-4 py-6 mb-4 shadow-md bg-cover bg-center"
+      style={{ backgroundImage: `url(${calorieTrackerImg})` }}
+    >
+      <div className="bg-white rounded-lg mx-4 px-4 py-3 space-y-2">
+        {/* Header and progress */}
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-semibold text-gray-700">Kalorier</span>
+          <span className="text-sm font-medium text-gray-600">
+            {remaining} Gjenstående
+          </span>
         </div>
-        <div className="text-sm font-medium">{remaining} Gjenstående</div>
-      </div>
 
-      <div className="w-full bg-white/30 h-[6px] rounded-full overflow-hidden mb-4">
+        {/* Progress bar */}
         <div
-          className="h-[6px] bg-white transition-all"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
+          className="w-full h-[8px] rounded-full overflow-hidden"
+          style={{ backgroundColor: 'rgba(219, 219, 219, 0.8)' }}
+        >
+          <div
+            className="h-full bg-gradient-to-r from-[#E64D20] to-[#F67B39] rounded-full transition-all"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
 
-      <div className="flex justify-between text-sm font-medium">
-        <div className="flex items-center gap-1">
-          <FaFontAwesomeFlag size={16} />
-          <span>{dailyCalorieGoal}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <FaAppleAlt size={16} />
-          <span>{consumedCalories}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <FaGlassWater size={16} />
-          <span>{(water || 0).toFixed(1)}L</span>
+        {/* Details */}
+        <div className="flex justify-between text-xs font-medium text-gray-700 pt-1">
+          <div className="flex items-center gap-1">
+            <FaFontAwesomeFlag size={14} />
+            <span>{dailyCalorieGoal}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FaAppleAlt size={14} />
+            <span>{consumedCalories}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FaGlassWater size={14} />
+            <span>{(water || 0).toFixed(2)} L</span> {/* 2 decimals */}
+          </div>
         </div>
       </div>
     </div>

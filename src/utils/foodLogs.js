@@ -88,3 +88,23 @@ export function getNutritionDetails(product) {
     return acc;
   }, {});
 }
+
+export function calculateTotalCaloriesFromLogs(foodLogs = []) {
+  return foodLogs.reduce((sum, log) => {
+    return (
+      sum +
+      log.products.reduce((subtotal, product) => {
+        const kcalEntry = product.nutrition.find(
+          (n) =>
+            n.name.toLowerCase() === 'kalorier' ||
+            n.name.toLowerCase() === 'kcal'
+        );
+        const kcalValue = kcalEntry?.value
+          ? parseFloat(kcalEntry.value.replace(/[^\d.]/g, ''))
+          : 0;
+
+        return subtotal + kcalValue;
+      }, 0)
+    );
+  }, 0);
+}
