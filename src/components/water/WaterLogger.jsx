@@ -34,7 +34,14 @@ const WaterLogger = ({ isOpen, onToggle }) => {
         : 0;
       const newAmount = prevAmount + amount;
 
-      await setDoc(waterRef, { water: newAmount }, { merge: true });
+      await setDoc(
+        waterRef,
+        {
+          water: newAmount,
+          waterDate: new Date().toISOString().split('T')[0],
+        },
+        { merge: true }
+      );
       setWater(newAmount);
       onToggle();
       setAmount(0.25);
