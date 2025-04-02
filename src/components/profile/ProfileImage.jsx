@@ -25,6 +25,138 @@ const ProfileImage = ({ user, setError }) => {
     }
   }, [user]);
 
+  const compressImage = (file) => {
+    return new Promise((resolve, reject) => {
+      const TARGET_SIZE = 100 * 1024;
+      if (file.size <= TARGET_SIZE) {
+        console.log(
+          `File already smaller than target (${file.size / 1024}KB). Skipping compression.`
+        );
+        resolve(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+
+          let width = img.width;
+          let height = img.height;
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round(height * (MAX_WIDTH / width));
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round(width * (MAX_HEIGHT / height));
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const getBlob = (q) => {
+            return new Promise((res) => {
+              const outputType = file.type.includes('png')
+                ? file.type
+                : 'image/jpeg';
+              canvas.toBlob(
+                (blob) => {
+                  res(blob);
+                },
+                outputType,
+                q
+              );
+            });
+          };
+
+          const compressWithTargetSize = async () => {
+            let min = 0.1;
+            let max = 0.95;
+            let targetSize = TARGET_SIZE;
+            let closestBlob = null;
+            let closestDiff = Infinity;
+
+            const maxQualityBlob = await getBlob(max);
+            if (maxQualityBlob.size <= targetSize) {
+              return maxQualityBlob;
+            }
+
+            for (let i = 0; i < 7; i++) {
+              const mid = (min + max) / 2;
+              const blob = await getBlob(mid);
+              const diff = Math.abs(blob.size - targetSize);
+
+              if (blob.size <= targetSize && diff < closestDiff) {
+                closestDiff = diff;
+                closestBlob = blob;
+              }
+
+              if (blob.size > targetSize) {
+                max = mid;
+              } else {
+                min = mid;
+              }
+            }
+
+            if (!closestBlob) {
+              closestBlob = await getBlob(min);
+            }
+
+            return closestBlob;
+          };
+
+          compressWithTargetSize()
+            .then((blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: blob.type,
+                lastModified: Date.now(),
+              });
+
+              console.log(
+                `Original size: ${(file.size / 1024).toFixed(2)}KB, Compressed size: ${(compressedFile.size / 1024).toFixed(2)}KB`
+              );
+
+              if (compressedFile.size >= file.size) {
+                console.log(
+                  'Compression would make file larger, using original'
+                );
+                resolve(file);
+              } else {
+                resolve(compressedFile);
+              }
+            })
+            .catch((err) => {
+              console.error('Compression error:', err);
+              reject(err);
+            });
+        };
+
+        img.onerror = (error) => {
+          reject(error);
+        };
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -34,20 +166,16 @@ const ProfileImage = ({ user, setError }) => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Maksimal bildestørrelse er 5MB.');
-      return;
-    }
-
     setUploading(true);
     setUploadProgress(0);
     setError('');
 
     try {
+      const compressedFile = await compressImage(file);
+
       const storage = getStorage();
       const auth = getAuth();
 
-      // Delete previous image if exists
       if (profileImageUrl) {
         try {
           const baseUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.app.options.storageBucket}/o/`;
@@ -61,9 +189,11 @@ const ProfileImage = ({ user, setError }) => {
         }
       }
 
-      // Upload new image
-      const storageRef = ref(storage, `profileImages/${user.uid}/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const timestamp = new Date().getTime();
+      const fileName = `${timestamp}_${compressedFile.name}`;
+
+      const storageRef = ref(storage, `profileImages/${user.uid}/${fileName}`);
+      const uploadTask = uploadBytesResumable(storageRef, compressedFile);
 
       uploadTask.on(
         'state_changed',

@@ -1,4 +1,4 @@
-import { use } from 'react';
+/*import { use } from 'react';
 import MealSelectionModal from '../ean-logging/MealSelectionModal';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ const LogModal = ({ setIsModalOpen }) => {
   return (
     <>
       <MealSelectionModal
-        isOpen={true}
+        isOpen={false}
         onClose={onClose}
         onConfirm={handleConfirm}
       />
@@ -21,3 +21,4 @@ const LogModal = ({ setIsModalOpen }) => {
 };
 
 export default LogModal;
+*/
