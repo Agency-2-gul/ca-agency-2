@@ -20,7 +20,7 @@ const CalorieTracker = () => {
     useCalorieStore();
   const [isGoalMenuOpen, setIsGoalMenuOpen] = useState(false);
   const inputRef = useRef(null);
-  const { water, setWater } = useWaterStore(); // ✅ Use water store
+  const { water, setWater } = useWaterStore();
 
   useEffect(() => {
     if (!authReady || !user) return;
@@ -43,8 +43,30 @@ const CalorieTracker = () => {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          if (data.calorieGoal) setDailyCalorieGoal(data.calorieGoal);
-          if (typeof data.water === 'number') setWater(data.water); // ✅ set Zustand value
+
+          // Set calorie goal if available
+          if (data.calorieGoal) {
+            setDailyCalorieGoal(data.calorieGoal);
+          }
+
+          // Handle water + reset if outdated
+          const today = new Date().toISOString().split('T')[0];
+          const storedDate = data.waterDate;
+
+          if (storedDate !== today) {
+            // Reset water intake and update Firestore
+            await setDoc(
+              userRef,
+              {
+                water: 0,
+                waterDate: today,
+              },
+              { merge: true }
+            );
+            setWater(0);
+          } else {
+            setWater(data.water || 0);
+          }
         }
       } catch (err) {
         console.error('Failed to fetch user goal/water:', err);
