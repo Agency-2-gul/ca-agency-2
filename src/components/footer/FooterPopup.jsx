@@ -88,7 +88,7 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
             </button>
           </div>
 
-          <div className="p-3 flex flex-col gap-y-2 rounded-lg">
+          <div className="my-2 flex flex-col gap-y-4 rounded-lg">
             <WaterLogger
               isOpen={openLogger === 'water'}
               onToggle={() =>
