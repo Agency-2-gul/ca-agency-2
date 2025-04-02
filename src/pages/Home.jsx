@@ -1,4 +1,4 @@
-import CalorieTracker from '../components/home/CalorieTracker';
+import CalorieTracker from '../components/calorie-tracker/CalorieTracker';
 import WeightVisualization from '../components/weight-tracker/WeightVisualization';
 
 const Home = () => {

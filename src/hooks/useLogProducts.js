@@ -11,6 +11,7 @@ import useMacroStore from '../stores/macroStore';
 import {
   extractWeightFromName,
   normalizeUnit,
+  calculateNutritionValues,
 } from '../components/ean-logging/weight';
 
 const useLogProducts = () => {
@@ -41,54 +42,64 @@ const useLogProducts = () => {
       const db = getFirestore();
 
       const cleanProducts = selectedProducts.map((product) => {
-        const { id, name, nutrition, weight, unit, fullWeight } = product;
+        const {
+          id,
+          name,
+          nutrition,
+          weight,
+          unit,
+          fullWeight,
+          isPiece,
+          weightPerPiece,
+          totalProductWeight,
+        } = product;
 
         const parsedId = id || 'unknown id';
         const parsedName = name || 'Ukjent produkt';
-        const fallback = extractWeightFromName(name);
-        const parsedWeight = weight || fallback.fallbackWeight || 100;
-        const parsedUnit = unit || fallback.fallbackUnit || 'g';
-        const full = fullWeight || parsedWeight;
 
-        const { normalizedWeight, normalizedUnit } = normalizeUnit(
-          full,
-          parsedUnit
+        // Extract info from name if not already provided
+        const nameInfo = extractWeightFromName(name);
+
+        // Determine if it's piece-based
+        const isPieceBased =
+          isPiece || unit === 'stk' || unit === 'piece' || unit === 'pieces';
+
+        // Get weight per piece (if it's piece-based)
+        const effectiveWeightPerPiece =
+          weightPerPiece ||
+          nameInfo.weightPerPiece ||
+          (totalProductWeight && nameInfo.fallbackWeight
+            ? totalProductWeight / nameInfo.fallbackWeight
+            : null);
+
+        // Ensure we have the correct weight and unit for the database
+        const parsedWeight = weight || nameInfo.fallbackWeight || 100;
+        const parsedUnit =
+          unit || (isPieceBased ? 'stk' : nameInfo.fallbackUnit || 'g');
+
+        // Calculate appropriate nutrition values based on the logged amount
+        const mappedNutrition = calculateNutritionValues(
+          nutrition,
+          parsedWeight,
+          parsedUnit,
+          effectiveWeightPerPiece,
+          totalProductWeight || nameInfo.totalProductWeight
         );
 
-        // This is the key fix - calculate the scale factor correctly
-        // Nutrition values are typically per 100g/100ml, so we need to scale accordingly
-        const scaleFactor = parsedWeight / 100; // Scale based on selected weight vs 100g/ml standard
-
-        console.log('Product scaling debug:');
-        console.log('- parsedWeight:', parsedWeight);
-        console.log('- normalizedWeight:', normalizedWeight);
-        console.log('- scaleFactor:', scaleFactor);
-
-        const mappedNutrition = Array.isArray(nutrition)
-          ? nutrition.map((item) => {
-              // Convert amount to number if it's not already
-              const baseAmount =
-                typeof item.amount === 'number'
-                  ? item.amount
-                  : parseFloat(String(item.amount).replace(',', '.')) || 0;
-
-              // Scale the amount based on the selected weight (per 100g/ml)
-              const scaledAmount = (baseAmount * scaleFactor).toFixed(2);
-
-              // Include the unit if available
-              const unitStr = item.unit || '';
-
-              return {
-                name: item.display_name || item.name || 'Ukjent næringsstoff',
-                value: `${scaledAmount}${unitStr ? ' ' + unitStr : ''}`.trim(),
-              };
-            })
-          : [];
+        console.log('Logging product:', parsedName);
+        console.log('- Amount:', parsedWeight, parsedUnit);
+        console.log('- Is piece-based:', isPieceBased);
+        console.log('- Weight per piece:', effectiveWeightPerPiece, 'g');
+        console.log(
+          '- Nutrition sample:',
+          mappedNutrition.length > 0 ? mappedNutrition[0] : 'No nutrition data'
+        );
 
         return {
           id: parsedId,
           name: parsedName,
           weight: parsedWeight,
+          unit: parsedUnit, // Store the actual unit (stk, g, ml)
           nutrition: mappedNutrition,
         };
       });
