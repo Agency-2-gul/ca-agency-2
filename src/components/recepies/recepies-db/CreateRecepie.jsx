@@ -1,33 +1,138 @@
-export default function CreateRecepie() {
+import { useState } from 'react';
+import { FaPlus, FaMinus, FaCheckCircle } from 'react-icons/fa';
+import useLogNewRecepie from '../../../hooks/useLogRecepies';
+
+export default function CreateRecipe() {
+  const { logRecepie } = useLogNewRecepie();
+  const [title, setTitle] = useState('');
+  const [ingredients, setIngredients] = useState(['']);
+  const [steps, setSteps] = useState(['']);
+
+  // Adding and removing ingredients and steps...
+  const addIngredient = () => setIngredients([...ingredients, '']);
+  const addStep = () => setSteps([...steps, '']);
+  const removeStep = (index) => {
+    if (index > 0) {
+      const newSteps = [...steps];
+      newSteps.splice(index, 1);
+      setSteps(newSteps);
+    }
+  };
+  const removeIngredient = (index) => {
+    if (index > 0) {
+      const newIngredients = [...ingredients];
+      newIngredients.splice(index, 1);
+      setIngredients(newIngredients);
+    }
+  };
+  // Handling changes in the input fields...
+  const handleIngredientChange = (index, value) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index] = value;
+    setIngredients(newIngredients);
+  };
+
+  const handleStepChange = (index, value) => {
+    const newSteps = [...steps];
+    newSteps[index] = value;
+    setSteps(newSteps);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim()) {
+      alert('Oppgi en tittel for oppskriften!');
+      return;
+    }
+    await logRecepie(title, ingredients, steps);
+  };
+
   return (
-    <div>
-      <form action="">
-        <label htmlFor=""></label>
-        <input
-          type="text"
-          placeholder="Navn på oppskrift"
-          className="border-2 border-gray-300 p-2 rounded-md w-full mb-4"
-        />
-        <input
-          type="text"
-          placeholder="Beskrivelse"
-          className="border-2 border-gray-300 p-2 rounded-md w-full mb-4"
-        />
-        <input
-          type="text"
-          placeholder="Ingredienser"
-          className="border-2 border-gray-300 p-2 rounded-md w-full mb-4"
-        />
-        <input
-          type="text"
-          placeholder="Fremgangsmåte"
-          className="border-2 border-gray-300 p-2 rounded-md w-full mb-4"
-        />
-        <input
-          type="text"
-          placeholder="Bilde URL"
-          className="border-2 border-gray-300 p-2 rounded-md w-full mb-4"
-        />
+    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold" htmlFor="rTitle">
+            Hva kaller du din Oppskrift?
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            name="rTitle"
+            className="p-2 border rounded-md"
+          />
+        </div>
+
+        {/* Ingredients Section */}
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Hva trenger du?</label>
+          {ingredients.map((ingredient, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={ingredient}
+                onChange={(e) => handleIngredientChange(index, e.target.value)}
+                className="p-2 border rounded-md flex-grow"
+              />
+              {index > 0 && (
+                <button
+                  type="button"
+                  onClick={() => removeIngredient(index)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <FaMinus />
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+            onClick={addIngredient}
+          >
+            <FaPlus /> Legg til Ingrediens
+          </button>
+        </div>
+
+        {/* Process Section */}
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Forklar Prosessen:</label>
+          {steps.map((step, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={step}
+                onChange={(e) => handleStepChange(index, e.target.value)}
+                className="p-2 border rounded-md flex-grow"
+              />
+              {index > 0 && (
+                <button
+                  type="button"
+                  onClick={() => removeStep(index)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <FaMinus />
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+            onClick={addStep}
+          >
+            <FaPlus /> Legg til Trinn
+          </button>
+        </div>
+        {/* Submit Button */}
+        <div className="flex flex-col items-center">
+          <button
+            type="submit"
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+          >
+            <FaCheckCircle className="text-xl" /> Registrer Oppskrift
+          </button>
+        </div>
       </form>
     </div>
   );
