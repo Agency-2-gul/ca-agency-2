@@ -6,6 +6,8 @@ import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
 import WaterLogger from '../water/WaterLogger';
 import BarcodeIcon from '../../assets/Barcode_Icon.png';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
+import MagGlassIcon from '../../assets/MagGlass_Icon.png';
 
 const FooterPopup = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
@@ -71,10 +73,11 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
           <div className="grid grid-cols-2 gap-4">
             <Link
               to="/diary"
-              className="flex flex-col items-center justify-center bg-white p-6 rounded-lg flex-grow cursor-pointer"
+              className="flex flex-col items-center justify-center text-[#E64D20] bg-white p-6 rounded-lg flex-grow cursor-pointer"
+              onClick={() => setIsOpen(false)}
             >
-              {' '}
-              Logg manuelt
+              <img src={MagGlassIcon} alt="Icon" className="m-1" />
+              <span>Logg manuelt</span>
             </Link>
             <button
               onClick={() => setScannerOpen(true)}
