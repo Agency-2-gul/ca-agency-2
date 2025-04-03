@@ -18,6 +18,9 @@ export default {
         "progress-bar-undertext": "rgba(51, 51, 51, 0.45)",
         "calorie-tracker-icon": "#B4B4B4",
       },
+      screens: {
+        '2xl': '1400px',
+      }
     },
   },
   plugins: ["tailwindcss/postcss, autoprefixer"],

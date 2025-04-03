@@ -63,7 +63,7 @@ const DiaryLog = () => {
   };
 
   return (
-    <div className="px-4">
+    <div className="px-4 2xl:px-0">
       <MiniCalorieTracker />
       {meals.map((meal) => {
         const mealKey = formatMealName(meal.name);
