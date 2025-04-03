@@ -146,12 +146,12 @@ export default function CreateRecipe() {
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-        >
-          <FaCheckCircle /> Registrer Oppskrift
-        </button>
+        <div className="flex flex-col items-center">
+          <button type="submit" className=" text-green-400 px-4 p-2">
+            <FaCheckCircle className="w-8 h-auto" />
+          </button>
+          <span>Regitsrer Oppskrift</span>
+        </div>
       </form>
     </div>
   );

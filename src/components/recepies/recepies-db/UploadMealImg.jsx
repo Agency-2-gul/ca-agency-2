@@ -15,21 +15,80 @@ const UploadMealImg = ({ setMealImageUrl, setError }) => {
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    if (!file.type.match('image.*')) {
+
+    if (!file.type.startsWith('image/')) {
       setError('Kun bildefiler er tillatt!');
       return;
     }
+
     setUploading(true);
     setUploadProgress(0);
     setError('');
 
     try {
+      const compressImage = async (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+
+              // Resize settings
+              const maxSize = 1000; // Max width or height
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height && width > maxSize) {
+                height *= maxSize / width;
+                width = maxSize;
+              } else if (height > maxSize) {
+                width *= maxSize / height;
+                height = maxSize;
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Compress image
+              canvas.toBlob(
+                (blob) => {
+                  if (blob && blob.size > 500 * 1024) {
+                    // Reduce quality further if needed
+                    canvas.toBlob(
+                      (compressedBlob) => resolve(compressedBlob),
+                      'image/jpeg',
+                      0.6
+                    ); // Adjust quality as needed
+                  } else {
+                    resolve(blob);
+                  }
+                },
+                'image/jpeg',
+                0.8 // Initial quality
+              );
+            };
+            img.onerror = (err) => reject(err);
+          };
+          reader.onerror = (err) => reject(err);
+        });
+      };
+
+      const compressedBlob = await compressImage(file);
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: 'image/jpeg',
+      });
+
       const storage = getStorage();
       const timestamp = new Date().getTime();
-      const fileName = `${timestamp}_${file.name}`;
+      const fileName = `${timestamp}_${compressedFile.name}`;
 
       const storageRef = ref(storage, `mealImages/${fileName}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadTask = uploadBytesResumable(storageRef, compressedFile);
 
       uploadTask.on(
         'state_changed',
@@ -50,7 +109,7 @@ const UploadMealImg = ({ setMealImageUrl, setError }) => {
         }
       );
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error('Error compressing or uploading image:', error);
       setError('Opplasting mislyktes! Prøv igjen.');
       setUploading(false);
     }
