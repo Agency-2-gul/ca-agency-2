@@ -21,6 +21,16 @@ export async function getTodaysLoggedFoods(userId) {
   return snapshot.docs.map((doc) => doc.data());
 }
 
+export async function getMealsFromUser(userId) {
+  const mealLogsRef = collection(db, 'recepies');
+
+  const q = query(mealLogsRef, where('userId', '==', userId));
+
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((doc) => doc.data());
+}
+
 // Extract calories from each product, scaled by weight
 export function extractCaloriesFromLoggedFood(foodLog) {
   const products = foodLog.products || [];
