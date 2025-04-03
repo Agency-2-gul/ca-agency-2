@@ -101,7 +101,7 @@ const DiaryLog = () => {
                     navigate(`/log-products/${mealKey}`);
                   }}
                 >
-                  <FaPlus size={28} className="relative top-2" />
+                  <FaPlus size={28} className="relative cursor-pointer" />
                 </button>
               </div>
             </div>
