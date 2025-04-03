@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { FaPlus, FaMinus, FaCheckCircle } from 'react-icons/fa';
 import useLogNewRecepie from '../../../hooks/useLogRecepies';
+import UploadMealImg from './UploadMealImg';
 
 export default function CreateRecipe() {
   const { logRecepie } = useLogNewRecepie();
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   const [steps, setSteps] = useState(['']);
+  const [mealImageUrl, setMealImageUrl] = useState(''); // New state for meal image
+  const [error, setError] = useState('');
 
   // Adding and removing ingredients and steps...
   const addIngredient = () => setIngredients([...ingredients, '']);
@@ -44,7 +47,7 @@ export default function CreateRecipe() {
       alert('Oppgi en tittel for oppskriften!');
       return;
     }
-    await logRecepie(title, ingredients, steps);
+    await logRecepie(title, ingredients, steps, mealImageUrl);
   };
 
   return (
@@ -61,6 +64,23 @@ export default function CreateRecipe() {
             name="rTitle"
             className="p-2 border rounded-md"
           />
+        </div>
+
+        {/* Meal Image Upload */}
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold">Last opp et bilde av retten:</label>
+          <UploadMealImg
+            setMealImageUrl={setMealImageUrl}
+            setError={setError}
+          />
+          {mealImageUrl && (
+            <img
+              src={mealImageUrl}
+              alt="Meal"
+              className="w-32 h-32 object-cover rounded-md mx-auto"
+            />
+          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
 
         {/* Ingredients Section */}
@@ -118,21 +138,20 @@ export default function CreateRecipe() {
           ))}
           <button
             type="button"
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+            className="text-blue-600 hover:text-blue-800"
             onClick={addStep}
           >
             <FaPlus /> Legg til Trinn
           </button>
         </div>
+
         {/* Submit Button */}
-        <div className="flex flex-col items-center">
-          <button
-            type="submit"
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-          >
-            <FaCheckCircle className="text-xl" /> Registrer Oppskrift
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+        >
+          <FaCheckCircle /> Registrer Oppskrift
+        </button>
       </form>
     </div>
   );
