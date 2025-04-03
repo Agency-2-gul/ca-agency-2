@@ -53,7 +53,7 @@ const MiniCalorieTracker = () => {
 
   return (
     <div
-      className="max-w-[1400px] -mx-4 py-6 mb-4 shadow-md bg-cover bg-center"
+      className="max-w-[1400px] -mx-4 2xl:mx-0 py-6 mb-4 shadow-md bg-cover bg-center"
       style={{ backgroundImage: `url(${calorieTrackerImg})` }}
     >
       <div className="bg-white rounded-lg mx-4 px-4 py-3 space-y-2">
