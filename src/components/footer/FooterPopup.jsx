@@ -23,8 +23,9 @@ const FooterPopup = ({ isOpen, setIsOpen }) => {
     const currentPath = location.pathname;
 
     if (
-      currentPath.startsWith('/log-products') &&
-      !prevPath.startsWith('/log-products')
+      (currentPath.startsWith('/log-products') &&
+        !prevPath.startsWith('/log-products')) ||
+      (currentPath.startsWith('/diary') && !prevPath.startsWith('/diary'))
     ) {
       setIsOpen(false);
     }
