@@ -42,9 +42,7 @@ const LogProductsPage = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-lg font-semibold">
-        Logg produkter for måltid {mealName}
-      </h2>
+      <h2 className="text-lg font-semibold">Logg produkter for {mealName}</h2>
 
       <input
         type="text"

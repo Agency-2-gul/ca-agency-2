@@ -18,7 +18,7 @@ const useLogNewRecepie = () => {
     return () => unsubscribe();
   }, []);
 
-  const logRecepie = async (mealName, ingredients, steps) => {
+  const logRecepie = async (mealName, ingredients, steps, mealImageUrl) => {
     if (!user) {
       alert('Logg Inn DA!');
       return;
@@ -31,6 +31,7 @@ const useLogNewRecepie = () => {
         ingredients: ingredients,
         steps: steps,
         mealName: mealName,
+        image: mealImageUrl,
         date: serverTimestamp(),
       });
       alert('Oppskrift Lagret!');
