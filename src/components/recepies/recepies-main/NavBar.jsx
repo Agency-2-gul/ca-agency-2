@@ -1,14 +1,26 @@
-import { useNavigate } from 'react-router-dom';
-const NavBar = () => {
-  const navigate = useNavigate();
-
+const NavBar = ({ setActiveTab, activeTab }) => {
   return (
-    <nav className="flex justify-between mx-10">
-      <p>Alle</p>
-      <p>Mine Oppskrifter</p>
-      <p>Utvalgte</p>
-      <p>Nyeste</p>
-    </nav>
+    <div className="flex justify-around p-2 rounded-lg ">
+      <button
+        className={`p-2 ${activeTab === 'mostLiked' ? 'text-orange-500 font-bold' : 'text-gray-500'}`}
+        onClick={() => setActiveTab('mostLiked')}
+      >
+        Most Liked
+      </button>
+      <button
+        className={`p-2 ${activeTab === 'newest' ? 'text-orange-500 font-bold' : 'text-gray-500'}`}
+        onClick={() => setActiveTab('newest')}
+      >
+        Newest
+      </button>
+      <button
+        className={`p-2 ${activeTab === 'myRecepies' ? 'text-orange-500 font-bold' : 'text-gray-500'}`}
+        onClick={() => setActiveTab('myRecepies')}
+      >
+        My Recipes
+      </button>
+    </div>
   );
 };
+
 export default NavBar;

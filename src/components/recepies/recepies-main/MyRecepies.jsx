@@ -17,7 +17,6 @@ const MyRecepies = () => {
         setLoading(true);
         const userMeals = await getMealsFromUser(user.uid); // Fetch meals
         setMeals(userMeals);
-        console.log('Fetched meals:', userMeals);
       } catch (err) {
         console.error('Error fetching meals:', err);
         setError('Kunne ikke hente oppskrifter.');
