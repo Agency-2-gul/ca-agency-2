@@ -38,6 +38,32 @@ const useFetch = (url, options = {}) => {
       }
 
       const result = await response.json();
+
+      // Filter products if this is a products API call
+      if (
+        result.data &&
+        Array.isArray(result.data) &&
+        url.includes('/products')
+      ) {
+        // First filter to include only products with nutrition data
+        let filteredProducts = result.data.filter(
+          (product) =>
+            product.nutrition &&
+            Array.isArray(product.nutrition) &&
+            product.nutrition.length > 0
+        );
+
+        // Then remove duplicate product names
+        const uniqueNames = new Set();
+        result.data = filteredProducts.filter((product) => {
+          if (product.name && !uniqueNames.has(product.name)) {
+            uniqueNames.add(product.name);
+            return true;
+          }
+          return false;
+        });
+      }
+
       setData(result);
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -54,10 +80,10 @@ const useFetch = (url, options = {}) => {
 
     return () => {
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort(); // Cleanup on unmount
+        abortControllerRef.current.abort();
       }
     };
-  }, [fetchData]); // ✅ Only triggers when URL/options change
+  }, [fetchData]);
 
   return { data, loading, error, refetch: fetchData };
 };
