@@ -22,7 +22,7 @@ const Recipes = () => {
   };
 
   return (
-    <div className="flex flex-col gap-y-16">
+    <div className="flex flex-col gap-y-8">
       <div className="space-y-4">
         <SearchRecepie />
         <NavBar setActiveTab={setActiveTab} activeTab={activeTab} />
