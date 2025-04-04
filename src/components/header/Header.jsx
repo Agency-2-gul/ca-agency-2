@@ -74,23 +74,23 @@ const Header = () => {
               {showDropdown && (
                 <div
                   onMouseLeave={() => setShowDropdown(false)}
-                  className="absolute right-0 top-full mt-2 bg-white border rounded shadow-lg p-4 space-y-3 z-50 min-w-[220px]"
+                  className="absolute right-0 top-full mt-6 bg-white rounded shadow-lg p-4 space-y-3 z-50 min-w-[220px]"
                 >
                   <Link
                     to="/diary"
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Logg manuelt
                   </Link>
                   <button
                     onClick={() => setShowScanner(true)}
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Strekkodeskanning
                   </button>
                   <button
                     onClick={() => setShowWeightLogger(true)}
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Logg vekt
                   </button>
