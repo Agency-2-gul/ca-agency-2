@@ -29,16 +29,17 @@ const MyRecepies = () => {
   }, [authReady, user]); // Runs when `authReady` or `user` changes
 
   return (
-    <div className="p-4 mx-4 bg-white rounded-lg shadow-md max-w-lg">
+    <div className="p-4 mx-4 max-w-lg">
       <h2 className="font-bold text-xl text-[#333] mb-2">Mine Oppskrifter</h2>
       {loading && <p className="text-gray-500">Laster oppskrifter...</p>}
       {error && <p className="text-red-500">{error}</p>}
-
-      {meals.length > 0
-        ? meals.map((meal, index) => <MealCard key={index} meal={meal} />)
-        : !loading && (
-            <p className="text-gray-500">Ingen oppskrifter funnet.</p>
-          )}
+      <div className="flex flex-col gap-y-4">
+        {meals.length > 0
+          ? meals.map((meal, index) => <MealCard key={index} meal={meal} />)
+          : !loading && (
+              <p className="text-gray-500">Ingen oppskrifter funnet.</p>
+            )}
+      </div>
     </div>
   );
 };

@@ -4,12 +4,15 @@ import SearchRecepie from '../components/recepies/recepies-main/SearchRecepie';
 import NewestRecepies from '../components/recepies/recepies-main/NewestRecepies';
 import MyRecepies from '../components/recepies/recepies-main/MyRecepies';
 import NavBar from '../components/recepies/recepies-main/NavBar';
+import AllRecepies from '../components/recepies/recepies-main/AllRecepies';
 
 const Recipes = () => {
   const [activeTab, setActiveTab] = useState('mostLiked'); // Default tab
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'all':
+        return <AllRecepies />;
       case 'mostLiked':
         return <RecepiesMostLiked />;
       case 'newest':
