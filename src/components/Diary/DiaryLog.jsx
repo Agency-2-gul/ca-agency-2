@@ -121,9 +121,9 @@ const DiaryLog = () => {
 
             {/* Logged items */}
             {isExpanded && loggedData.products.length > 0 && (
-              <ul className="mt-2 space-y-2 bg-gray-50 p-4">
+              <ul className="space-y-2 bg-white p-4">
                 {loggedData.products.map((product, i) => (
-                  <li key={i} className="p-2 bg-white rounded-lg shadow-sm">
+                  <li key={i} className="text-sm">
                     {product.name}
                   </li>
                 ))}
