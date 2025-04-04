@@ -93,7 +93,7 @@ const DiaryLog = () => {
                   {loggedData.totalKcal} kcal
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 mt-3">
                 <button
                   className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
                   onClick={(e) => {
@@ -108,7 +108,7 @@ const DiaryLog = () => {
 
             {/* Chevron and divider */}
             {loggedData.products.length > 0 && (
-              <div className="flex justify-center border-t border-gray-200 w-[80%] mx-auto pb-2">
+              <div className="flex justify-center border-t border-gray-200 w-[92%] mx-auto pb-2">
                 <div
                   className="flex items-center gap-1 text-sm text-gray-600 cursor-pointer pt-1"
                   onClick={() => toggleMeal(mealKey)}
@@ -121,9 +121,9 @@ const DiaryLog = () => {
 
             {/* Logged items */}
             {isExpanded && loggedData.products.length > 0 && (
-              <ul className="mt-2 space-y-2 bg-gray-50 p-4">
+              <ul className="space-y-2 bg-white p-4">
                 {loggedData.products.map((product, i) => (
-                  <li key={i} className="p-2 bg-white rounded-lg shadow-sm">
+                  <li key={i} className="text-sm">
                     {product.name}
                   </li>
                 ))}

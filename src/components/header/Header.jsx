@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
+import WaterLogger from '../water/WaterLogger';
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showWeightLogger, setShowWeightLogger] = useState(false);
+  const [showWaterLogger, setShowWaterLogger] = useState(false); // Add state for WaterLogger
   const [isDesktop, setIsDesktop] = useState(false);
+
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,25 +44,41 @@ const Header = () => {
           <nav className="flex items-center gap-6">
             <Link
               to="/"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Oversikt
             </Link>
             <Link
               to="/diary"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/diary')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Dagbok
             </Link>
             <Link
               to="/recipes"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/recipes')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Oppskrifter
             </Link>
             <Link
               to="/profile"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/profile')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Profil
             </Link>
@@ -74,25 +95,31 @@ const Header = () => {
               {showDropdown && (
                 <div
                   onMouseLeave={() => setShowDropdown(false)}
-                  className="absolute right-0 top-full mt-2 bg-white border rounded shadow-lg p-4 space-y-3 z-50 min-w-[220px]"
+                  className="absolute right-0 top-full mt-6 bg-white rounded shadow-lg p-4 space-y-3 z-50 min-w-[220px]"
                 >
                   <Link
                     to="/diary"
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Logg manuelt
                   </Link>
                   <button
                     onClick={() => setShowScanner(true)}
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Strekkodeskanning
                   </button>
                   <button
                     onClick={() => setShowWeightLogger(true)}
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Logg vekt
+                  </button>
+                  <button
+                    onClick={() => setShowWaterLogger(true)}
+                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                  >
+                    Logg vann
                   </button>
                 </div>
               )}
@@ -116,6 +143,20 @@ const Header = () => {
             <WeightLogger isOpen={true} onToggle={() => {}} hideToggle={true} />
             <button
               onClick={() => setShowWeightLogger(false)}
+              className="mt-4 text-sm text-gray-600 hover:text-red-500"
+            >
+              Lukk
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showWaterLogger && isDesktop && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white p-6 rounded-xl shadow-xl water-modal">
+            <WaterLogger isOpen={true} onToggle={() => {}} hideToggle={true} />
+            <button
+              onClick={() => setShowWaterLogger(false)}
               className="mt-4 text-sm text-gray-600 hover:text-red-500"
             >
               Lukk
