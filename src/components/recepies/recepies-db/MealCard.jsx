@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
+import ShibaIcon from '../../../assets/Shiba_Icon.png'; // Placeholder image
+
 const MealCard = ({ meal }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -9,11 +11,23 @@ const MealCard = ({ meal }) => {
       {/* Header (Image, Title, Calories, Plus Icon) */}
       <div className="flex items-center">
         {/* Meal Image */}
-        <img
-          src={meal.image}
-          alt={meal.mealName}
-          className="w-12 h-12 rounded-md object-cover"
-        />
+        {meal.image ? (
+          <img
+            src={meal.image}
+            alt={meal.mealName}
+            className="w-12 h-12 rounded-md object-cover"
+            onError={(e) => {
+              e.target.onerror = null; // Prevent infinite loop
+              e.target.src = ShibaIcon; // Fallback image
+            }}
+          />
+        ) : (
+          <img
+            src={ShibaIcon} // Default fallback image
+            alt="Placeholder"
+            className="w-12 h-12 rounded-md object-cover"
+          />
+        )}
 
         {/* Meal Details */}
         <div className="flex-1 mx-3">
