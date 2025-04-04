@@ -3,11 +3,11 @@ import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import useWaterStore from '../../stores/waterStore';
 
-const WaterLogger = ({ isOpen, onToggle }) => {
+const WaterLogger = ({ isOpen, onToggle, hideToggle = false }) => {
   const [amount, setAmount] = useState(0.25);
   const [user, setUser] = useState(null);
   const [saving, setSaving] = useState(false);
-  const { setWater } = useWaterStore();
+  const { setWater, refreshWater } = useWaterStore();
 
   useEffect(() => {
     const auth = getAuth();
@@ -54,25 +54,27 @@ const WaterLogger = ({ isOpen, onToggle }) => {
 
   return (
     <div className="w-full">
-      <button
-        onClick={onToggle}
-        className={`flex items-center justify-between w-full px-4 py-2 bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition cursor-pointer ${isOpen ? 'rounded-t-lg border-b-0' : 'rounded-lg'}`}
-      >
-        <span className="font-medium text-gray-700">Logg vann</span>
-        <svg
-          className={`h-5 w-5 transform transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
+      {!hideToggle && (
+        <button
+          onClick={onToggle}
+          className={`flex items-center justify-between w-full px-4 py-2 bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition cursor-pointer ${isOpen ? 'rounded-t-lg border-b-0' : 'rounded-lg'}`}
         >
-          <path d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+          <span className="font-medium text-gray-700">Logg vann</span>
+          <svg
+            className={`h-5 w-5 transform transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
 
       {isOpen && (
-        <div className="-mt-1">
-          <div className="flex items-center gap-3 p-4 bg-white rounded-b-lg border-t-2 border-gray-300">
+        <div className={!hideToggle ? '-mt-1' : ''}>
+          <div className="flex items-center gap-3 p-4 bg-white rounded-b-lg lg:rounded-lg border border-gray-300">
             <span className="text-gray-700 font-medium min-w-20">Vann</span>
             <div className="flex-1">
               <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm p-1">
