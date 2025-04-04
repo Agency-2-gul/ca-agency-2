@@ -252,7 +252,7 @@ const LogProductsPage = () => {
 
             {/* Add/Remove Button */}
             <button
-              className={`p-3 rounded-full ${
+              className={`p-3 rounded-full cursor-pointer ${
                 isProductSelected(product.id)
                   ? 'text-green-500'
                   : 'text-orange-500'
@@ -266,7 +266,7 @@ const LogProductsPage = () => {
       </ul>
 
       {selectedProducts.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg border-t">
+        <div className="fixed bottom-19 left-0 right-0 bg-white p-4 shadow-lg border-t">
           <div className="max-w-lg mx-auto">
             <h3 className="text-sm font-semibold">
               Valgte produkter ({selectedProducts.length}):
