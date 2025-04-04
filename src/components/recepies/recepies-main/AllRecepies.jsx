@@ -1,22 +1,17 @@
+import { getAllMeals } from '../../../utils/foodLogs';
 import { useEffect, useState } from 'react';
-import { getMealsFromUser } from '../../../utils/foodLogs';
-import { useAuth } from '../../../context/authContext';
 import MealCard from '../recepies-db/MealCard';
-
-const MyRecepies = () => {
-  const { user, authReady } = useAuth();
+const AllRecepies = () => {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!authReady || !user) return; // Wait until authentication is ready
-
     const fetchMeals = async () => {
       try {
         setLoading(true);
-        const userMeals = await getMealsFromUser(user.uid); // Fetch meals
-        setMeals(userMeals);
+        const allMeals = await getAllMeals(); // Fetch all meals
+        setMeals(allMeals);
       } catch (err) {
         console.error('Error fetching meals:', err);
         setError('Kunne ikke hente oppskrifter.');
@@ -24,9 +19,8 @@ const MyRecepies = () => {
         setLoading(false);
       }
     };
-
     fetchMeals();
-  }, [authReady, user]); // Runs when `authReady` or `user` changes
+  }, []); // Empty dependency array to run once on mount
 
   return (
     <div className="p-4 mx-4 max-w-lg">
@@ -44,4 +38,4 @@ const MyRecepies = () => {
   );
 };
 
-export default MyRecepies;
+export default AllRecepies;
