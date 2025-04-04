@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
@@ -8,6 +8,17 @@ const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showWeightLogger, setShowWeightLogger] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    handleResize(); // check on load
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <header className="bg-white shadow-md">
@@ -99,10 +110,10 @@ const Header = () => {
         </div>
       )}
 
-      {showWeightLogger && (
+      {showWeightLogger && isDesktop && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white p-6 rounded-xl shadow-xl">
-            <WeightLogger defaultOpen />
+          <div className="bg-white p-6 rounded-xl shadow-xl weight-modal">
+            <WeightLogger isOpen={true} onToggle={() => {}} hideToggle={true} />
             <button
               onClick={() => setShowWeightLogger(false)}
               className="mt-4 text-sm text-gray-600 hover:text-red-500"
