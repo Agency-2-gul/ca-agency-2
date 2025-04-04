@@ -117,7 +117,7 @@ const Header = () => {
                   </button>
                   <button
                     onClick={() => setShowWaterLogger(true)}
-                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                    className="block w-full text-left hover:underline hover:decoration-orange-500 hover:font-bold font-medium cursor-pointer"
                   >
                     Logg vann
                   </button>
