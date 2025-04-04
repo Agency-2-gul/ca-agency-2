@@ -9,7 +9,7 @@
   @apply flex flex-col items-center justify-center w-[55px] h-full;
 }
 .icon {
-  @apply text-gray-600 text-[23px];
+  @apply text-[23px];
 }
 .icon-stroke {
   @apply stroke-1;

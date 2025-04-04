@@ -5,6 +5,7 @@ import NewestRecepies from '../components/recepies/recepies-main/NewestRecepies'
 import MyRecepies from '../components/recepies/recepies-main/MyRecepies';
 import NavBar from '../components/recepies/recepies-main/NavBar';
 import AllRecepies from '../components/recepies/recepies-main/AllRecepies';
+import NewRecepieButton from '../components/recepies/recepies-main/NewRecepieLink';
 
 const Recipes = () => {
   const [activeTab, setActiveTab] = useState('mostLiked'); // Default tab
@@ -26,9 +27,10 @@ const Recipes = () => {
 
   return (
     <div className="flex flex-col gap-y-8">
-      <div className="space-y-4">
+      <div className="space-y-4 ">
         <SearchRecepie />
         <NavBar setActiveTab={setActiveTab} activeTab={activeTab} />
+        <NewRecepieButton />
       </div>
       {renderContent()}
     </div>
