@@ -108,7 +108,7 @@ const DiaryLog = () => {
 
             {/* Chevron and divider */}
             {loggedData.products.length > 0 && (
-              <div className="flex justify-center border-t border-gray-200 w-[80%] mx-auto pb-2">
+              <div className="flex justify-center border-t border-gray-200 w-[92%] mx-auto pb-2">
                 <div
                   className="flex items-center gap-1 text-sm text-gray-600 cursor-pointer pt-1"
                   onClick={() => toggleMeal(mealKey)}
