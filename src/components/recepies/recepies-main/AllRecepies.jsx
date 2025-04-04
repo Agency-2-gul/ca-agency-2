@@ -23,8 +23,8 @@ const AllRecepies = () => {
   }, []); // Empty dependency array to run once on mount
 
   return (
-    <div className="p-4 mx-4 max-w-lg">
-      <h2 className="font-bold text-xl text-[#333] mb-2">Mine Oppskrifter</h2>
+    <div className="flex flex-col gap-y-8 p-4 mx-4  max-w-lg">
+      <h2 className="font-bold text-xl text-[#333] mb-2">Alle Oppskrifter</h2>
       {loading && <p className="text-gray-500">Laster oppskrifter...</p>}
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex flex-col gap-y-4">
