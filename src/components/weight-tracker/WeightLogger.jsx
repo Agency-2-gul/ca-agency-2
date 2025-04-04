@@ -79,7 +79,7 @@ const WeightLogger = ({
 
   // Extract form content to a reusable JSX block
   const weightForm = (
-    <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200">
+    <div className="flex items-center gap-3 p-4 bg-white rounded-b-lg lg:rounded-lg border border-gray-300">
       <span className="text-gray-700 font-medium min-w-20">Vekt</span>
       <div className="flex-1">
         <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm p-1">

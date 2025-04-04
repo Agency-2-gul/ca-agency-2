@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
+import WaterLogger from '../water/WaterLogger';
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showWeightLogger, setShowWeightLogger] = useState(false);
+  const [showWaterLogger, setShowWaterLogger] = useState(false); // Add state for WaterLogger
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
@@ -94,6 +96,12 @@ const Header = () => {
                   >
                     Logg vekt
                   </button>
+                  <button
+                    onClick={() => setShowWaterLogger(true)}
+                    className="block w-full text-left hover:text-orange-600 font-medium cursor-pointer"
+                  >
+                    Logg vann
+                  </button>
                 </div>
               )}
             </div>
@@ -116,6 +124,20 @@ const Header = () => {
             <WeightLogger isOpen={true} onToggle={() => {}} hideToggle={true} />
             <button
               onClick={() => setShowWeightLogger(false)}
+              className="mt-4 text-sm text-gray-600 hover:text-red-500"
+            >
+              Lukk
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showWaterLogger && isDesktop && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white p-6 rounded-xl shadow-xl water-modal">
+            <WaterLogger isOpen={true} onToggle={() => {}} hideToggle={true} />
+            <button
+              onClick={() => setShowWaterLogger(false)}
               className="mt-4 text-sm text-gray-600 hover:text-red-500"
             >
               Lukk
