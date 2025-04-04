@@ -5,7 +5,7 @@ const SearchRecepie = () => {
   return (
     <>
       <div
-        className="flex items-center justify-center w-full h-12 bg p-2"
+        className="flex items-center justify-center w-full h-12 bg py-8"
         style={{ backgroundImage: `url(${calorieTrackerImg})` }}
       >
         <input
