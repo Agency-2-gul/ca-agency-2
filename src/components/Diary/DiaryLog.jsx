@@ -93,7 +93,7 @@ const DiaryLog = () => {
                   {loggedData.totalKcal} kcal
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 mt-3">
                 <button
                   className="bg-transparent text-orange-500 hover:bg-orange-100 p-2 rounded-full transition"
                   onClick={(e) => {
