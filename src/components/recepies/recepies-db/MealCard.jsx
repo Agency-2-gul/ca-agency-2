@@ -36,8 +36,7 @@ const MealCard = ({ meal }) => {
           </h3>
           <p className="text-xs text-red-500 font-bold">{meal.calories} kcal</p>
           <p className="text-xs text-gray-500">
-            {meal.ingredients.slice(0, 2).join(', ')}, +{' '}
-            {meal.ingredients.length} Ingredienser
+            + {meal.ingredients.length} Ingredienser
           </p>
         </div>
 

@@ -7,14 +7,16 @@ const NewRecepieButton = () => {
     navigate('/recepies-db/CreateRecepie');
   };
   return (
-    <div className="flex justify-center items-center">
-      <button
-        onClick={handleClick}
-        className="flex flex-col items-center bg-orange-500  p-4 rounded-lg shadow-xl text-white font-bold cursor-pointer"
-      >
-        <FaPizzaSlice size={20} className="text-white" />
-        <span className="ml-2">Ny Oppskrift</span>
-      </button>
+    <div className="flex h-[140px] justify-center items-center w-full bg-gradient-to-t from-[#E64D20] to-[#F67B39]">
+      <div className="flex w-[184px] h-[100px] justify-center shadow-xl rounded-lg items-center bg-[#FAFAFA]">
+        <button
+          onClick={handleClick}
+          className="flex flex-col items-center p-4 rounded-lg text-white font-bold cursor-pointer"
+        >
+          <FaPizzaSlice size={30} className="text-orange-500" />
+          <span className="ml-2 text-[20px] text-orange-500">Ny Oppskrift</span>
+        </button>
+      </div>
     </div>
   );
 };
