@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 .footer {
-  @apply bg-[#F7F7F7] text-black p-4 flex sticky bottom-0 justify-between gap-6 items-end w-[100%];
+  @apply bg-[#FFFFFF] text-black p-4 flex sticky bottom-0 justify-between gap-6 items-end w-[100%];
   box-shadow: 0px -4px 10px 0px rgba(0, 0, 0, 0.07);
 }
 

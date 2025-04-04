@@ -292,7 +292,7 @@ const WeightVisualization = ({ isWidget = false }) => {
 
   const renderFullView = () => {
     return (
-      <div className="relative bg-white rounded-lg shadow">
+      <div className="relative bg-white">
         <div
           className={`p-4 transition-all duration-300 ${expanded ? 'pb-20' : ''}`}
         >
