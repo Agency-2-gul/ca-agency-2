@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import BarcodeScanner from '../ean-scan/BarcodeScanner';
 import WeightLogger from '../weight-tracker/WeightLogger';
@@ -9,6 +9,9 @@ const Header = () => {
   const [showScanner, setShowScanner] = useState(false);
   const [showWeightLogger, setShowWeightLogger] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,25 +42,41 @@ const Header = () => {
           <nav className="flex items-center gap-6">
             <Link
               to="/"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Oversikt
             </Link>
             <Link
               to="/diary"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/diary')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Dagbok
             </Link>
             <Link
               to="/recipes"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/recipes')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Oppskrifter
             </Link>
             <Link
               to="/profile"
-              className="font-medium text-gray-800 hover:text-orange-500 transition"
+              className={`font-medium transition hover:underline hover:decoration-orange-500 hover:underline-offset-4 ${
+                isActive('/profile')
+                  ? 'underline decoration-orange-500 underline-offset-4 text-black font-bold'
+                  : 'text-gray-800'
+              }`}
             >
               Profil
             </Link>
