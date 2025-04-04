@@ -266,7 +266,7 @@ const LogProductsPage = () => {
       </ul>
 
       {selectedProducts.length > 0 && (
-        <div className="fixed bottom-19 left-0 right-0 bg-white p-4 shadow-lg border-t">
+        <div className="fixed lg:bottom-0 bottom-19 left-0 right-0 bg-white p-4 shadow-lg border-t">
           <div className="max-w-lg mx-auto">
             <h3 className="text-sm font-semibold">
               Valgte produkter ({selectedProducts.length}):
