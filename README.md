@@ -12,6 +12,11 @@ npm install
 npm run dev
 ```
 
+## Note for first time users
+This website looks best in mobile size, please adjust screen size or view on mobile to get the best experience.
+
+To ensure everything runs properly, put in a calorie goal ("endre mål" over grunnmål på oversikt) and also log your weight (click on the "+" in mobile footer, or hover over "logg her" in desktop header).
+
 ## Project structure
 
 ```
